@@ -94,24 +94,6 @@ class DBHelper:
             return result(True, None,
                           "I've forgotten where we were. Please start over")
 
-    def get(self, attribute):
-        """ Get values from the attribute of an item return tuple of (truthy error, value, error speech)
-
-        This will also create the user if they dont exist
-        """
-
-        result = namedtuple('result', ['err', 'value', 'error_speech'])
-        get = self.getAll()
-        if isinstance(get.value, dict):
-            if attribute in get.value:
-                return result(False, get.value[attribute], None)
-        else:
-            # this means something really went wrong, or the user is new
-            if get.err:
-                return result(True, None, get.error_speech)
-            else:
-                return result(False, None, get.error_speech)
-
     def setAll(self, attributes):
         """ Set many attributes of an item return tuple of (truthy error, error speech)
 
@@ -159,10 +141,3 @@ class DBHelper:
             return result(False, None)
         except KeyError:
             return result(True, 'Keyerror')
-
-    def set(self, attribute, value):
-        """ Set attribute of an item return tuple of (truthy error, error speech)
-
-        This will also create the user if they don't exist
-        """
-        return self.setAll({attribute: value})
