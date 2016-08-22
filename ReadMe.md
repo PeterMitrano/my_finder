@@ -1,4 +1,4 @@
-# My Finder
+# My Finder [![Build Status](https://travis-ci.org/PeterMitrano/my_finder.svg?branch=master)](https://travis-ci.org/PeterMitrano/my_finder)
 
 An alexa skill for remembering where you put stuff!
 
