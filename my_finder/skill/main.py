@@ -48,7 +48,7 @@ class Skill:
 
                 # save this to our database!
                 # first grab whatever was there previously so we don't lose it
-                if result.value:
+                if result.value is not None:
                     data = result.value
                     data.pop('userId')
                 else:
@@ -58,14 +58,16 @@ class Skill:
                 self.db_helper.setAll(data)
 
             if intent == 'GetLocationIntent':
-                if result.value:  # indicates user exists
+                if result.value is None:
                     return responder.tell("Sorry, you need to tell me where that item is first.")
 
-                item = event['request']['intent']['slots']['Item']
-                location = event['request']['intent']['slots']['Location']
+                item = event['request']['intent']['slots']['Item']['value']
 
-                # reverse the underscore to space translation
-                item = item.replace('_', ' ')
+                # make sure we replace spaces with underscores
+                item_key = item.replace(' ', '_')
+
+                # check what we pulled from db
+                location = result.value[item_key]
 
                 return responder.tell(
                     "The Item is %s, and the location is %s" %
