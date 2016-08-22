@@ -88,7 +88,6 @@ class MyFinderTest(unittest.TestCase):
     items = ["keys", "wallet", "yellow folder", "work shoes"]
     locations = ["dresser drawer", "bottom of closet", "backpack", "under my desk"]
 
-    @wip
     def test_set_and_get(self):
         delete_table(core.LOCAL_DB_URI)
 
