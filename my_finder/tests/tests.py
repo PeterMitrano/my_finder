@@ -84,6 +84,24 @@ def make_get_request(item):
         }
     }
 
+def make_launch_request():
+    return {
+        "version": 1.0,
+        "session": {
+            "new": True,
+            "sessionId": "0",
+            "application": {
+                "applicationId": core.APP_ID
+            },
+            "user": {
+                "userId": "test_user"
+            }
+        },
+        "request": {
+            "type": "LaunchRequest"
+        }
+    }
+
 
 class MyFinderTest(unittest.TestCase):
 
@@ -109,3 +127,12 @@ class MyFinderTest(unittest.TestCase):
             self.assertTrue(responder.is_valid(response_dict))
             self.assertIn(item,
                           response_dict['response']['outputSpeech']['ssml'])
+
+
+    def test_launch(self):
+        delete_table(core.LOCAL_DB_URI)
+
+        request = make_launch_request()
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
