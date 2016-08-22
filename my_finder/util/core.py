@@ -1,0 +1,1 @@
+LOGGER = 'my_finder'

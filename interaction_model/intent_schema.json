@@ -1,0 +1,22 @@
+{
+    "intents": [
+        {
+            "intent": "SetLocationIntent",
+            "slots": [
+                {
+                    "name": "Item",
+                    "type": "AMAZON.LITERAL"
+                }
+            ]
+        },
+        {
+            "intent": "GetLocationIntent",
+            "slots": [
+                {
+                    "name": "Item",
+                    "type": "AMAZON.LITERAL"
+                }
+            ]
+        }
+    ]
+}

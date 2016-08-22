@@ -1,0 +1,32 @@
+SetLocationIntent I put my {keys|Item} in my tableside drawer
+SetLocationIntent I put my {wallet|Item} in my tableside drawer
+SetLocationIntent I put my {shoes|Item} in my tableside drawer
+SetLocationIntent I put my {black coat|Item} in my tableside drawer
+
+SetLocationIntent I left my {keys|Item} in the blue bin
+SetLocationIntent I left my {wallet|Item} in the blue bin
+SetLocationIntent I left my {shoes|Item} in the blue bin
+SetLocationIntent I left my {black coat|Item} in the blue bin
+
+GetLocationIntent where I put my {keys|Item}
+GetLocationIntent where I put my {wallet|Item}
+GetLocationIntent where I put my {shoes|Item}
+GetLocationIntent where I put my {black coat|Item}
+
+GetLocationIntent where are my {keys|Item}
+GetLocationIntent where are my {wallet|Item}
+GetLocationIntent where are my {shoes|Item}
+GetLocationIntent where are my {black coat|Item}
+GetLocationIntent where is my {keys|Item}
+GetLocationIntent where is my {wallet|Item}
+GetLocationIntent where is my {shoes|Item}
+GetLocationIntent where is my {black coat|Item}
+
+GetLocationIntent where my {keys|Item} are
+GetLocationIntent where my {wallet|Item} are
+GetLocationIntent where my {shoes|Item} are
+GetLocationIntent where my {black coat|Item} are
+GetLocationIntent where my {keys|Item} is
+GetLocationIntent where my {wallet|Item} is
+GetLocationIntent where my {shoes|Item} is
+GetLocationIntent where my {black coat|Item} is
