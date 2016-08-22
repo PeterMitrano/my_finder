@@ -29,7 +29,6 @@ class Skill:
         self.db_helper.init_table()
         result = self.db_helper.getAll()
 
-
         # handle simple launch request
         request_type = event['request']['type']
         if request_type == 'LaunchRequest':
@@ -41,7 +40,8 @@ class Skill:
 
             if intent == 'SetLocationIntent':
                 item = event['request']['intent']['slots']['Item']['value']
-                location = event['request']['intent']['slots']['Location']['value']
+                location = event['request']['intent']['slots']['Location'][
+                    'value']
 
                 # make sure we replace spaces with underscores
                 item = item.replace(' ', '_')
@@ -59,7 +59,8 @@ class Skill:
 
             if intent == 'GetLocationIntent':
                 if result.value is None:
-                    return responder.tell("Sorry, you need to tell me where that item is first.")
+                    return responder.tell(
+                        "Sorry, you need to tell me where that item is first.")
 
                 item = event['request']['intent']['slots']['Item']['value']
 
@@ -69,6 +70,5 @@ class Skill:
                 # check what we pulled from db
                 location = result.value[item_key]
 
-                return responder.tell(
-                    "The Item is %s, and the location is %s" %
-                    (item, location))
+                return responder.tell("The Item is %s, and the location is %s"
+                                      % (item, location))

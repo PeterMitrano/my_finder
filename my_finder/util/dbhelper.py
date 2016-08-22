@@ -82,7 +82,7 @@ class DBHelper:
                 # so we mark that they've used the skill and put them in the db
                 logging.getLogger(core.LOGGER).info("Adding new user: %s" %
                                                     self.user)
-                item = { 'userId': self.user, }
+                item = {'userId': self.user, }
                 self.table.put_item(Item=item)
 
                 # this is an not error, so you better check for None as value

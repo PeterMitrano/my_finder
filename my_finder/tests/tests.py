@@ -11,6 +11,7 @@ import lambda_function
 def wip(f):
     return attr('wip')(f)
 
+
 def delete_table(endpoint_url):
     """deletes the table if it already exists"""
     client = boto3.client(
@@ -55,6 +56,7 @@ def make_set_request(item, location):
         }
     }
 
+
 def make_get_request(item):
     return {
         "version": 1.0,
@@ -86,7 +88,8 @@ def make_get_request(item):
 class MyFinderTest(unittest.TestCase):
 
     items = ["keys", "wallet", "yellow folder", "work shoes"]
-    locations = ["dresser drawer", "bottom of closet", "backpack", "under my desk"]
+    locations = ["dresser drawer", "bottom of closet", "backpack",
+                 "under my desk"]
 
     def test_set_and_get(self):
         delete_table(core.LOCAL_DB_URI)
@@ -104,4 +107,5 @@ class MyFinderTest(unittest.TestCase):
             response_dict = lambda_function.handle_event(request, None)
 
             self.assertTrue(responder.is_valid(response_dict))
-            self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(item,
+                          response_dict['response']['outputSpeech']['ssml'])
