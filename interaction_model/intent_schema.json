@@ -6,6 +6,10 @@
                 {
                     "name": "Item",
                     "type": "AMAZON.LITERAL"
+                },
+                {
+                    "name": "Location",
+                    "type": "AMAZON.LITERAL"
                 }
             ]
         },

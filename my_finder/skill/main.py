@@ -1,8 +1,12 @@
+import logging
+
 from my_finder import stage
 from my_finder.util import core
+from my_finder.util import responder
+from my_finder.util import dbhelper
+
 
 class Skill:
-
     def handle_event(self, event, context):
         # check if we're debugging locally
         if stage.PROD:
@@ -18,6 +22,39 @@ class Skill:
         user = event['session']['user']['userId']
         request_appId = event['session']['application']['applicationId']
         if core.APP_ID != request_appId:
-            raise Exception('application id %s does not match.' % request_appId)
+            raise Exception('application id %s does not match.' %
+                            request_appId)
+
+        self.db_helper = dbhelper.DBHelper(user, endpoint_url)
+        self.db_helper.init_table()
+        result = self.db_helper.getAll()
 
 
+        # handle simple launch request
+        request_type = event['request']['type']
+        if request_type == 'LaunchRequest':
+            return responder.ask('what item do you want to remember?')
+
+        elif request_type == 'IntentRequest':
+
+            intent = event['request']['intent']['name']
+
+            if intent == 'SetLocationIntent':
+                item = event['request']['intent']['slots']['Item']['value']
+                location = event['request']['intent']['slots']['Location']['value']
+
+                # save this to our database!
+                # first grab whatever was there previously so we don't lose it
+                data = result.value if result.value else {}
+                data[item] = location
+                self.db_helper.setAll(data)
+
+            if intent == 'GetLocationIntent':
+                if result.value:  # indicates user exists
+                    return responder.tell("Sorry, you need to tell me where that item is first.")
+
+                item = event['request']['intent']['slots']['Item']
+                location = event['request']['intent']['slots']['Location']
+                return responder.tell(
+                    "The Item is %s, and the location is %s" %
+                    (item, location))
