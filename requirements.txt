@@ -1,0 +1,17 @@
+astroid==1.4.8
+backports.functools-lru-cache==1.2.1
+boto3==1.4.0
+botocore==1.4.48
+configparser==3.5.0
+docutils==0.12
+futures==3.0.5
+isort==4.2.5
+jmespath==0.9.0
+lazy-object-proxy==1.2.2
+mccabe==0.5.2
+pylint==1.6.4
+python-dateutil==2.5.3
+s3transfer==0.1.2
+six==1.10.0
+wrapt==1.10.8
+yapf==0.11.1

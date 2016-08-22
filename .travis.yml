@@ -1,0 +1,21 @@
+sudo: required
+dist: trusty
+language: python
+python:
+- '2.7'
+install: pip install -r requirements.txt
+
+cache:
+  directories:
+  - /home/travis/virtualenv/python2.7/lib/python2.7/site-packages
+
+before_script:
+- mkdir -p db;
+- wget http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz -O dynamodb_local_latest.tar.gz;
+- tar -xf dynamodb_local_latest.tar.gz -C db
+- cd db
+- java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8000 &
+- cd ..
+
+script:
+- nosetests -x -v -a \!wip
