@@ -43,10 +43,18 @@ class Skill:
                 item = event['request']['intent']['slots']['Item']['value']
                 location = event['request']['intent']['slots']['Location']['value']
 
+                # make sure we replace spaces with underscores
+                item = item.replace(' ', '_')
+
                 # save this to our database!
                 # first grab whatever was there previously so we don't lose it
-                data = result.value if result.value else {}
+                if result.value:
+                    data = result.value
+                    data.pop('userId')
+                else:
+                    data = {}
                 data[item] = location
+
                 self.db_helper.setAll(data)
 
             if intent == 'GetLocationIntent':
@@ -55,6 +63,10 @@ class Skill:
 
                 item = event['request']['intent']['slots']['Item']
                 location = event['request']['intent']['slots']['Location']
+
+                # reverse the underscore to space translation
+                item = item.replace('_', ' ')
+
                 return responder.tell(
                     "The Item is %s, and the location is %s" %
                     (item, location))

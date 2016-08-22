@@ -56,11 +56,18 @@ def make_request(item, location):
 
 
 class MyFinderTest(unittest.TestCase):
+
+    items = ["keys", "wallet", "yellow folder", "work shoes"]
+    locations = ["dresser drawer", "bottom of closet", "backpack", "under my desk"]
+
     @wip
     def test_set_and_get(self):
         delete_table(core.LOCAL_DB_URI)
-        request = make_request("keys", "drawer")
-        lambda_function.handle_event(request, None)
 
-        result = lambda_function._skill.db_helper.getAll()
-        self.assertEqual(result.value["keys"], "drawer")
+        for item, location in zip(self.items, self.locations):
+            request = make_request(item, location)
+            lambda_function.handle_event(request, None)
+
+            result = lambda_function._skill.db_helper.getAll()
+            item_key = item.replace(' ', '_')
+            self.assertEqual(result.value[item_key], location)
