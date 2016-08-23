@@ -1,12 +1,12 @@
-SetLocationIntent I put my {keys|Item} in my tableside drawer
-SetLocationIntent I put my {wallet|Item} in my tableside drawer
-SetLocationIntent I put my {shoes|Item} in my tableside drawer
-SetLocationIntent I put my {black coat|Item} in my tableside drawer
+SetLocationIntent I put my {keys|Item} in my {tableside drawer|Location}
+SetLocationIntent I put my {wallet|Item} in my {tableside drawer|Location}
+SetLocationIntent I put my {shoes|Item} in my {tableside drawer|Location}
+SetLocationIntent I put my {black coat|Item} in my {tableside drawer|Location}
 
-SetLocationIntent I left my {keys|Item} in the blue bin
-SetLocationIntent I left my {wallet|Item} in the blue bin
-SetLocationIntent I left my {shoes|Item} in the blue bin
-SetLocationIntent I left my {black coat|Item} in the blue bin
+SetLocationIntent I left my {keys|Item} in the {blue bin|Location}
+SetLocationIntent I left my {wallet|Item} in the {blue bin|Location}
+SetLocationIntent I left my {shoes|Item} in the {blue bin|Location}
+SetLocationIntent I left my {black coat|Item} in the {blue bin|Location}
 
 GetLocationIntent where I put my {keys|Item}
 GetLocationIntent where I put my {wallet|Item}
