@@ -114,11 +114,12 @@ class MyFinderTest(unittest.TestCase):
 
         for item, location in zip(self.items, self.locations):
             request = make_set_request(item, location)
-            lambda_function.handle_event(request, None)
+            response_dict = lambda_function.handle_event(request, None)
 
             result = lambda_function._skill.db_helper.getAll()
             item_key = item.replace(' ', '_')
             self.assertEqual(result.value[item_key], location)
+            self.assertIn('response', response_dict)
 
         for item, location in zip(self.items, self.locations):
             request = make_get_request(item)

@@ -57,6 +57,8 @@ class Skill:
 
                 self.db_helper.setAll(data)
 
+                return responder.nop()
+
             if intent == 'GetLocationIntent':
                 if result.value is None:
                     return responder.tell(
