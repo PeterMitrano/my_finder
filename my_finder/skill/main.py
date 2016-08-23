@@ -7,6 +7,61 @@ from my_finder.util import dbhelper
 
 
 class Skill:
+    def handle_intent(self, event, session_attributes):
+        # handle simple launch request
+        request_type = event['request']['type']
+        if request_type == 'LaunchRequest':
+            return responder.ask("What's the item?", session_attributes)
+
+        elif request_type == 'IntentRequest':
+
+            intent = event['request']['intent']['name']
+
+            if intent == 'ItemIntent':
+                item = event['request']['intent']['slots']['Item']['value']
+                session_attributes['current_item'] = item
+                return responder.ask("What's the location?", session_attributes)
+            elif intent == 'LocationIntent':
+                location = event['request']['intent']['slots']['Location']['value']
+                pass
+
+            elif intent == 'SetLocationIntent':
+                item = event['request']['intent']['slots']['Item']['value']
+                location = event['request']['intent']['slots']['Location'][
+                    'value']
+
+                # make sure we replace spaces with underscores
+                item = item.replace(' ', '_')
+
+                # save this to our database!
+                # first grab whatever was there previously so we don't lose it
+                if self.result.value is not None:
+                    data = self.result.value
+                    data.pop('userId')
+                else:
+                    data = {}
+                data[item] = location
+
+                self.db_helper.setAll(data)
+
+                return responder.tell('Item is %s. Location is %s. Got it.' % (item, location))
+
+            elif intent == 'GetLocationIntent':
+                if self.result.value is None:
+                    return responder.tell(
+                        "Sorry, you need to tell me where that item is first.")
+
+                item = event['request']['intent']['slots']['Item']['value']
+
+                # make sure we replace spaces with underscores
+                item_key = item.replace(' ', '_')
+
+                # check what we pulled from db
+                location = self.result.value[item_key]
+
+                return responder.tell("The Item is %s, and the location is %s"
+                                      % (item, location))
+
     def handle_event(self, event, context):
         # check if we're debugging locally
         if stage.PROD:
@@ -27,50 +82,14 @@ class Skill:
 
         self.db_helper = dbhelper.DBHelper(user, endpoint_url)
         self.db_helper.init_table()
-        result = self.db_helper.getAll()
+        self.result = self.db_helper.getAll()
 
-        # handle simple launch request
-        request_type = event['request']['type']
-        if request_type == 'LaunchRequest':
-            return responder.ask('Try saying, tell my finder I put my frisbee is in the suitecase under my bed')
+        if 'attributes' in event['session']:
+            session_attributes = event['session']['attributes']
+        else:
+            session_attributes = {}
 
-        elif request_type == 'IntentRequest':
+        response = self.handle_intent(event, session_attributes)
 
-            intent = event['request']['intent']['name']
-
-            if intent == 'SetLocationIntent':
-                item = event['request']['intent']['slots']['Item']['value']
-                location = event['request']['intent']['slots']['Location'][
-                    'value']
-
-                # make sure we replace spaces with underscores
-                item = item.replace(' ', '_')
-
-                # save this to our database!
-                # first grab whatever was there previously so we don't lose it
-                if result.value is not None:
-                    data = result.value
-                    data.pop('userId')
-                else:
-                    data = {}
-                data[item] = location
-
-                self.db_helper.setAll(data)
-
-                return responder.tell('Item is %s. Location is %s. Got it.' % (item, location))
-
-            if intent == 'GetLocationIntent':
-                if result.value is None:
-                    return responder.tell(
-                        "Sorry, you need to tell me where that item is first.")
-
-                item = event['request']['intent']['slots']['Item']['value']
-
-                # make sure we replace spaces with underscores
-                item_key = item.replace(' ', '_')
-
-                # check what we pulled from db
-                location = result.value[item_key]
-
-                return responder.tell("The Item is %s, and the location is %s"
-                                      % (item, location))
+        logging.getLogger(core.LOGGER).warn(response)
+        return response

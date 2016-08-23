@@ -19,14 +19,13 @@ def tell(speech_output):
     return fini({}, response)
 
 
-def ask(speech_output):
+def ask(speech_output, session_attributes):
     response = {
         'outputSpeech': outputSpeech(speech_output),
         'repromptSpeech': outputSpeech(speech_output),
         'shouldEndSession': False
     }
-    # session attributes don't me anything for tell's
-    return fini({}, response)
+    return fini(session_attributes, response)
 
 
 def outputSpeech(ssml):

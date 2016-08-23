@@ -21,6 +21,24 @@
                     "type": "AMAZON.LITERAL"
                 }
             ]
+        },
+        {
+            "intent": "ItemIntent",
+            "slots": [
+                {
+                    "name": "Item",
+                    "type": "AMAZON.LITERAL"
+                }
+            ]
+        }
+        {
+            "intent": "LocationIntent",
+            "slots": [
+                {
+                    "name": "Location",
+                    "type": "AMAZON.LITERAL"
+                }
+            ]
         }
     ]
 }
