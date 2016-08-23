@@ -57,7 +57,7 @@ class Skill:
 
                 self.db_helper.setAll(data)
 
-                return responder.tell('%s is %s. Got it.' % (item, location))
+                return responder.tell('Item is %s. Location is %s. Got it.' % (item, location))
 
             if intent == 'GetLocationIntent':
                 if result.value is None:
