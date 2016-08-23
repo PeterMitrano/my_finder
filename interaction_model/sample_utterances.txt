@@ -1,31 +1,58 @@
+SetLocationIntent I put my {laptop|Item} next to the {stairs|Location}
+SetLocationIntent I put my {keys|Item} next to the {stairs|Location}
+SetLocationIntent I put my {wallet|Item} next to the {stairs|Location}
+SetLocationIntent I put my {shoes|Item} next to the {stairs|Location}
+SetLocationIntent I put my {black coat|Item} next to the {stairs|Location}
+
+SetLocationIntent I put my {laptop|Item} on my {bed|Location}
+SetLocationIntent I put my {keys|Item} on my {bed|Location}
+SetLocationIntent I put my {wallet|Item} on my {bed|Location}
+SetLocationIntent I put my {shoes|Item} on my {bed|Location}
+SetLocationIntent I put my {black coat|Item} on my {bed|Location}
+
+SetLocationIntent I put my {laptop|Item} in my {tableside drawer|Location}
 SetLocationIntent I put my {keys|Item} in my {tableside drawer|Location}
 SetLocationIntent I put my {wallet|Item} in my {tableside drawer|Location}
 SetLocationIntent I put my {shoes|Item} in my {tableside drawer|Location}
 SetLocationIntent I put my {black coat|Item} in my {tableside drawer|Location}
 
+SetLocationIntent I left my {laptop|Item} under my {shelf|Location}
+SetLocationIntent I left my {keys|Item} under my {shelf|Location}
+SetLocationIntent I left my {wallet|Item} under my {shelf|Location}
+SetLocationIntent I left my {shoes|Item} under my {shelf|Location}
+SetLocationIntent I left my {black coat|Item} under my {shelf|Location}
+
+SetLocationIntent I left my {laptop|Item} in the {blue bin|Location}
 SetLocationIntent I left my {keys|Item} in the {blue bin|Location}
 SetLocationIntent I left my {wallet|Item} in the {blue bin|Location}
 SetLocationIntent I left my {shoes|Item} in the {blue bin|Location}
 SetLocationIntent I left my {black coat|Item} in the {blue bin|Location}
 
+GetLocationIntent where I put my {laptop|Item}
 GetLocationIntent where I put my {keys|Item}
 GetLocationIntent where I put my {wallet|Item}
 GetLocationIntent where I put my {shoes|Item}
 GetLocationIntent where I put my {black coat|Item}
 
+GetLocationIntent where are my {laptop|Item}
 GetLocationIntent where are my {keys|Item}
 GetLocationIntent where are my {wallet|Item}
 GetLocationIntent where are my {shoes|Item}
 GetLocationIntent where are my {black coat|Item}
+
+GetLocationIntent where is my {laptop|Item}
 GetLocationIntent where is my {keys|Item}
 GetLocationIntent where is my {wallet|Item}
 GetLocationIntent where is my {shoes|Item}
 GetLocationIntent where is my {black coat|Item}
 
+GetLocationIntent where my {laptop|Item} are
 GetLocationIntent where my {keys|Item} are
 GetLocationIntent where my {wallet|Item} are
 GetLocationIntent where my {shoes|Item} are
 GetLocationIntent where my {black coat|Item} are
+
+GetLocationIntent where my {laptop|Item} is
 GetLocationIntent where my {keys|Item} is
 GetLocationIntent where my {wallet|Item} is
 GetLocationIntent where my {shoes|Item} is
