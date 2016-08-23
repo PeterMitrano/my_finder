@@ -32,7 +32,7 @@ class Skill:
         # handle simple launch request
         request_type = event['request']['type']
         if request_type == 'LaunchRequest':
-            return responder.ask('what item do you want to remember?')
+            return responder.ask('Try saying, tell my finder I put my frisbee is in the suitecase under my bed')
 
         elif request_type == 'IntentRequest':
 
@@ -57,7 +57,7 @@ class Skill:
 
                 self.db_helper.setAll(data)
 
-                return responder.nop()
+                return responder.tell('%s is %s. Got it.' % (item, location))
 
             if intent == 'GetLocationIntent':
                 if result.value is None:
