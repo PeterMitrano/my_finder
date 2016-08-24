@@ -7,6 +7,21 @@ from my_finder.util import dbhelper
 
 
 class Skill:
+    def add_item_location(self, item, location):
+        # make sure we replace spaces with underscores
+        item = item.replace(' ', '_')
+
+        # save this to our database!
+        # first grab whatever was there previously so we don't lose it
+        if self.result.value is not None:
+            data = self.result.value
+            data.pop('userId')
+        else:
+            data = {}
+        data[item] = location
+
+        self.db_helper.setAll(data)
+
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
         request_type = event['request']['type']
@@ -33,6 +48,7 @@ class Skill:
                         location = slots['ItemLocation']['value']
                         session_attributes['current_location'] = location
                         item = session_attributes['current_item']
+                        self.add_item_location(item, location)
                         return responder.tell("item is %s and location is %s. Got it" % (item, location))
 
                     else:
@@ -64,20 +80,7 @@ class Skill:
                     session_attributes['current_item'] = item
                     return responder.ask("Sorry, what's the location?", session_attributes)
 
-                # make sure we replace spaces with underscores
-                item = item.replace(' ', '_')
-
-                # save this to our database!
-                # first grab whatever was there previously so we don't lose it
-                if self.result.value is not None:
-                    data = self.result.value
-                    data.pop('userId')
-                else:
-                    data = {}
-                data[item] = location
-
-                self.db_helper.setAll(data)
-
+                self.add_item_location(item, location)
                 return responder.tell('Item is %s. Location is %s. Got it.' % (item, location))
 
             elif intent == 'GetLocationIntent':

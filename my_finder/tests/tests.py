@@ -194,21 +194,29 @@ class MyFinderTest(unittest.TestCase):
     def test_launch(self):
         delete_table(core.LOCAL_DB_URI)
 
+        item = 'pencil case'
+        location = 'bean bag chair'
+
         request = make_launch_request()
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertFalse(response_dict['response']['shouldEndSession'])
 
         # give item
-        request = make_item_or_location_request('pencil case')
+        request = make_item_or_location_request(item)
         request['session']['attributes'] = response_dict['sessionAttributes']
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertFalse(response_dict['response']['shouldEndSession'])
 
         # give location
-        request = make_item_or_location_request('bean bag chair')
+        request = make_item_or_location_request(location)
         request['session']['attributes'] = response_dict['sessionAttributes']
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
+
+        result = lambda_function._skill.db_helper.getAll()
+        item_key = item.replace(' ', '_')
+        self.assertEqual(result.value[item_key], location)
+        self.assertIn('response', response_dict)
