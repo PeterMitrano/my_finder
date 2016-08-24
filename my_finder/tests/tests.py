@@ -129,7 +129,6 @@ class MyFinderTest(unittest.TestCase):
             self.assertIn(item,
                           response_dict['response']['outputSpeech']['ssml'])
 
-    @wip
     def test_missing_location(self):
             request = make_set_request('blue notebook', 'first pocket of my backpack')
             request['request']['intent']['slots']['Location'].pop('value')
