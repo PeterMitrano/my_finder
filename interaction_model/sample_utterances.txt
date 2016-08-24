@@ -57,3 +57,16 @@ GetLocationIntent where my {keys|Item} is
 GetLocationIntent where my {wallet|Item} is
 GetLocationIntent where my {shoes|Item} is
 GetLocationIntent where my {black coat|Item} is
+
+ItemLocationIntent {laptop|ItemLocation}
+ItemLocationIntent {keys|ItemLocation}
+ItemLocationIntent {shoes|ItemLocation}
+ItemLocationIntent {black coat|ItemLocation}
+ItemLocationIntent {pencil case|ItemLocation}
+ItemLocationIntent {fluffy yellow jacket|ItemLocation}
+ItemLocationIntent {closet|ItemLocation}
+ItemLocationIntent {shelf|ItemLocation}
+ItemLocationIntent {blue suitcase|ItemLocation}
+ItemLocationIntent {under my shelf|ItemLocation}
+ItemLocationIntent {inside my black bag|ItemLocation}
+ItemLocationIntent {next to the bed|ItemLocation}

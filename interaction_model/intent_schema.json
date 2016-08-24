@@ -23,19 +23,10 @@
             ]
         },
         {
-            "intent": "ItemIntent",
+            "intent": "ItemLocationIntent",
             "slots": [
                 {
-                    "name": "Item",
-                    "type": "AMAZON.LITERAL"
-                }
-            ]
-        }
-        {
-            "intent": "LocationIntent",
-            "slots": [
-                {
-                    "name": "Location",
+                    "name": "ItemLocation",
                     "type": "AMAZON.LITERAL"
                 }
             ]

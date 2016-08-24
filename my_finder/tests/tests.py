@@ -56,6 +56,32 @@ def make_set_request(item, location):
         }
     }
 
+def make_item_or_location_request(item_or_location):
+    return {
+        "version": 1.0,
+        "session": {
+            "new": True,
+            "sessionId": "0",
+            "application": {
+                "applicationId": core.APP_ID
+            },
+            "user": {
+                "userId": "test_user"
+            }
+        },
+        "request": {
+            "type": "IntentRequest",
+            "intent": {
+                "name": "ItemLocationIntent",
+                "slots": {
+                    "ItemLocation": {
+                        "name": "ItemLocation",
+                        "value": item_or_location
+                    }
+                }
+            }
+        }
+    }
 
 def make_get_request(item):
     return {
@@ -164,3 +190,17 @@ class MyFinderTest(unittest.TestCase):
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # give item
+        request = make_item_or_location_request('pencil case')
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # give location
+        request = make_item_or_location_request('bean bag chair')
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertTrue(response_dict['response']['shouldEndSession'])

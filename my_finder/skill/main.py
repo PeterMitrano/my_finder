@@ -11,23 +11,38 @@ class Skill:
         # handle simple launch request
         request_type = event['request']['type']
         if request_type == 'LaunchRequest':
+            session_attributes['expecting_item'] = True
             return responder.ask("What's the item?", session_attributes)
 
         elif request_type == 'IntentRequest':
-
             intent = event['request']['intent']['name']
             slots = event['request']['intent']['slots']
 
-            if intent == 'ItemIntent':
-                if 'value' in slots['Item']:
-                    item = slots['Item']['value']
-                    session_attributes['current_item'] = item
-                    return responder.ask("What's the location?", session_attributes)
-                else:
-                    return responder.ask("Sorry, what's the item?", session_attributes)
+            if intent == 'ItemLocationIntent':
+                if 'value' in slots['ItemLocation']:
+                    item_or_location = slots['ItemLocation']['value']
 
-            elif intent == 'LocationIntent':
-                location = slots['Location']['value']
+                    if session_attributes['expecting_item']:
+                        item = slots['ItemLocation']['value']
+                        session_attributes['current_item'] = item
+                        session_attributes['expecting_item'] = False
+                        session_attributes['expecting_location'] = True
+                        return responder.ask("What's the location?", session_attributes)
+
+                    elif session_attributes['expecting_location']:
+                        location = slots['ItemLocation']['value']
+                        session_attributes['current_location'] = location
+                        item = session_attributes['current_item']
+                        return responder.tell("item is %s and location is %s. Got it" % (item, location))
+
+                    else:
+                        raise RuntimeError('neither item not location expected')
+                else:
+                    if session_attributes['expecting_item']:
+                        return responder.ask("Sorry, what's the item?", session_attributes)
+
+                    elif session_attributes['expecting_location']:
+                        return responder.ask("Sorry, what's the location?", session_attributes)
 
             elif intent == 'SetLocationIntent':
                 if 'value' in slots['Item']:
