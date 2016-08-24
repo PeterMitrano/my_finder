@@ -42,23 +42,29 @@ class Skill:
                         session_attributes['current_item'] = item
                         session_attributes['expecting_item'] = False
                         session_attributes['expecting_location'] = True
-                        return responder.ask("What's the location?", session_attributes)
+                        return responder.ask("What's the location?",
+                                             session_attributes)
 
                     elif session_attributes['expecting_location']:
                         location = slots['ItemLocation']['value']
                         session_attributes['current_location'] = location
                         item = session_attributes['current_item']
                         self.add_item_location(item, location)
-                        return responder.tell("item is %s and location is %s. Got it" % (item, location))
+                        return responder.tell(
+                            "item is %s and location is %s. Got it" %
+                            (item, location))
 
                     else:
-                        raise RuntimeError('neither item not location expected')
+                        raise RuntimeError(
+                            'neither item not location expected')
                 else:
                     if session_attributes['expecting_item']:
-                        return responder.ask("Sorry, what's the item?", session_attributes)
+                        return responder.ask("Sorry, what's the item?",
+                                             session_attributes)
 
                     elif session_attributes['expecting_location']:
-                        return responder.ask("Sorry, what's the location?", session_attributes)
+                        return responder.ask("Sorry, what's the location?",
+                                             session_attributes)
 
             elif intent == 'SetLocationIntent':
                 if 'value' in slots['Item']:
@@ -72,16 +78,21 @@ class Skill:
                     location = None
 
                 if not item and not location:
-                    return responder.ask("I didn't get an item or a location. What's the item?", session_attributes)
+                    return responder.ask(
+                        "I didn't get an item or a location. What's the item?",
+                        session_attributes)
                 if not item and location:
                     session_attributes['current_location'] = location
-                    return responder.ask("Sorry, what's the item?", session_attributes)
+                    return responder.ask("Sorry, what's the item?",
+                                         session_attributes)
                 if not location and item:
                     session_attributes['current_item'] = item
-                    return responder.ask("Sorry, what's the location?", session_attributes)
+                    return responder.ask("Sorry, what's the location?",
+                                         session_attributes)
 
                 self.add_item_location(item, location)
-                return responder.tell('Item is %s. Location is %s. Got it.' % (item, location))
+                return responder.tell('Item is %s. Location is %s. Got it.' %
+                                      (item, location))
 
             elif intent == 'GetLocationIntent':
                 item = event['request']['intent']['slots']['Item']['value']
@@ -92,7 +103,6 @@ class Skill:
                 if self.result.value is None or item_key not in self.result.value:
                     return responder.tell(
                         "Sorry, you need to tell me where that item is first.")
-
 
                 # check what we pulled from db
                 location = self.result.value[item_key]

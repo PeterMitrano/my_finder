@@ -56,6 +56,7 @@ def make_set_request(item, location):
         }
     }
 
+
 def make_item_or_location_request(item_or_location):
     return {
         "version": 1.0,
@@ -83,6 +84,7 @@ def make_item_or_location_request(item_or_location):
         }
     }
 
+
 def make_get_request(item):
     return {
         "version": 1.0,
@@ -109,6 +111,7 @@ def make_get_request(item):
             }
         }
     }
+
 
 def make_launch_request():
     return {
@@ -167,7 +170,8 @@ class MyFinderTest(unittest.TestCase):
 
         self.assertTrue(response_dict['response']['shouldEndSession'])
         self.assertTrue(responder.is_valid(response_dict))
-        self.assertIn("you need to tell me where that item is",response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn("you need to tell me where that item is",
+                      response_dict['response']['outputSpeech']['ssml'])
 
     def test_nonextistant_item(self):
         delete_table(core.LOCAL_DB_URI)
@@ -176,34 +180,36 @@ class MyFinderTest(unittest.TestCase):
 
         self.assertTrue(response_dict['response']['shouldEndSession'])
         self.assertTrue(responder.is_valid(response_dict))
-        self.assertIn("you need to tell me where that item is",response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn("you need to tell me where that item is",
+                      response_dict['response']['outputSpeech']['ssml'])
 
     def test_missing_location(self):
-            request = make_set_request('blue notebook', 'first pocket of my backpack')
-            request['request']['intent']['slots']['Location'].pop('value')
-            response_dict = lambda_function.handle_event(request, None)
+        request = make_set_request('blue notebook',
+                                   'first pocket of my backpack')
+        request['request']['intent']['slots']['Location'].pop('value')
+        response_dict = lambda_function.handle_event(request, None)
 
-            self.assertTrue(responder.is_valid(response_dict))
-            self.assertFalse(response_dict['response']['shouldEndSession'])
-            self.assertIn('current_item', response_dict['sessionAttributes'])
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+        self.assertIn('current_item', response_dict['sessionAttributes'])
 
     def test_missing_item(self):
-            request = make_set_request('giant pan', 'leftmost cupboard')
-            request['request']['intent']['slots']['Item'].pop('value')
-            response_dict = lambda_function.handle_event(request, None)
+        request = make_set_request('giant pan', 'leftmost cupboard')
+        request['request']['intent']['slots']['Item'].pop('value')
+        response_dict = lambda_function.handle_event(request, None)
 
-            self.assertTrue(responder.is_valid(response_dict))
-            self.assertFalse(response_dict['response']['shouldEndSession'])
-            self.assertIn('current_location', response_dict['sessionAttributes'])
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+        self.assertIn('current_location', response_dict['sessionAttributes'])
 
     def test_missing_item_and_location(self):
-            request = make_set_request('giant pan', 'leftmost cupboard')
-            request['request']['intent']['slots']['Item'].pop('value')
-            request['request']['intent']['slots']['Location'].pop('value')
-            response_dict = lambda_function.handle_event(request, None)
+        request = make_set_request('giant pan', 'leftmost cupboard')
+        request['request']['intent']['slots']['Item'].pop('value')
+        request['request']['intent']['slots']['Location'].pop('value')
+        response_dict = lambda_function.handle_event(request, None)
 
-            self.assertTrue(responder.is_valid(response_dict))
-            self.assertFalse(response_dict['response']['shouldEndSession'])
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
 
     def test_launch(self):
         delete_table(core.LOCAL_DB_URI)

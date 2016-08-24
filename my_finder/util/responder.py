@@ -9,8 +9,10 @@ def is_valid(response):
 
     return True
 
+
 def nop():
     return fini({}, {})
+
 
 def tell(speech_output):
     response = {'outputSpeech': outputSpeech(speech_output),
