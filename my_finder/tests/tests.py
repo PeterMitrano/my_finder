@@ -155,6 +155,15 @@ class MyFinderTest(unittest.TestCase):
             self.assertIn(item,
                           response_dict['response']['outputSpeech']['ssml'])
 
+    def test_nonextistant_item(self):
+        delete_table(core.LOCAL_DB_URI)
+        request = make_get_request('fake item')
+        response_dict = lambda_function.handle_event(request, None)
+
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertIn("you need to tell me where that item is",response_dict['response']['outputSpeech']['ssml'])
+
     def test_missing_location(self):
             request = make_set_request('blue notebook', 'first pocket of my backpack')
             request['request']['intent']['slots']['Location'].pop('value')
@@ -163,7 +172,6 @@ class MyFinderTest(unittest.TestCase):
             self.assertTrue(responder.is_valid(response_dict))
             self.assertFalse(response_dict['response']['shouldEndSession'])
             self.assertIn('current_item', response_dict['sessionAttributes'])
-
 
     def test_missing_item(self):
             request = make_set_request('giant pan', 'leftmost cupboard')
