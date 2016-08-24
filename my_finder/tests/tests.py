@@ -134,7 +134,8 @@ def make_launch_request():
 
 class MyFinderTest(unittest.TestCase):
 
-    items = ["keys", "wallet", "yellow folder", "work shoes"]
+    items = ["left sandel", "keys", "blue chair", "wallet", "yellow folder", "work shoes"]
+    similar_items = ["love sandel", "key", "chair", "my wallet", "yellow folders", "my worm shoe"]
     locations = ["dresser drawer", "bottom of closet", "backpack",
                  "under my desk"]
 
@@ -155,8 +156,28 @@ class MyFinderTest(unittest.TestCase):
             response_dict = lambda_function.handle_event(request, None)
 
             self.assertTrue(responder.is_valid(response_dict))
-            self.assertIn(item,
-                          response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(location, response_dict['response']['outputSpeech']['ssml'])
+
+    def test_fuzzy(self):
+        delete_table(core.LOCAL_DB_URI)
+
+        for item, location in zip(self.items, self.locations):
+            request = make_set_request(item, location)
+            response_dict = lambda_function.handle_event(request, None)
+
+            result = lambda_function._skill.db_helper.getAll()
+            item_key = item.replace(' ', '_')
+            self.assertEqual(result.value[item_key], location)
+            self.assertIn('response', response_dict)
+
+        for item, location in zip(self.similar_items, self.locations):
+            request = make_get_request(item)
+            response_dict = lambda_function.handle_event(request, None)
+
+            self.assertTrue(responder.is_valid(response_dict))
+            self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(location, response_dict['response']['outputSpeech']['ssml'])
 
     def test_nonextistant_item_amongst_other_items(self):
         delete_table(core.LOCAL_DB_URI)

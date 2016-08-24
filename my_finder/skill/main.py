@@ -39,7 +39,7 @@ class Skill:
         if confidence < DEFINITELY_NOT_A_MATCH:
             return None
 
-        return true_item_key
+        return self.result.value[true_item_key]
 
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
