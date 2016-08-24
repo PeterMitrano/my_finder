@@ -84,14 +84,15 @@ class Skill:
                 return responder.tell('Item is %s. Location is %s. Got it.' % (item, location))
 
             elif intent == 'GetLocationIntent':
-                if self.result.value is None:
-                    return responder.tell(
-                        "Sorry, you need to tell me where that item is first.")
-
                 item = event['request']['intent']['slots']['Item']['value']
 
                 # make sure we replace spaces with underscores
                 item_key = item.replace(' ', '_')
+
+                if self.result.value is None or item_key not in self.result.value:
+                    return responder.tell(
+                        "Sorry, you need to tell me where that item is first.")
+
 
                 # check what we pulled from db
                 location = self.result.value[item_key]

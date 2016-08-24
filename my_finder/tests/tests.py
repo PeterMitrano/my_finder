@@ -155,6 +155,20 @@ class MyFinderTest(unittest.TestCase):
             self.assertIn(item,
                           response_dict['response']['outputSpeech']['ssml'])
 
+    def test_nonextistant_item_amongst_other_items(self):
+        delete_table(core.LOCAL_DB_URI)
+
+        for item, location in zip(self.items, self.locations):
+            request = make_set_request(item, location)
+            response_dict = lambda_function.handle_event(request, None)
+
+        request = make_get_request('fake item')
+        response_dict = lambda_function.handle_event(request, None)
+
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertIn("you need to tell me where that item is",response_dict['response']['outputSpeech']['ssml'])
+
     def test_nonextistant_item(self):
         delete_table(core.LOCAL_DB_URI)
         request = make_get_request('fake item')
