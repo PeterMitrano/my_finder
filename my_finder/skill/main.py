@@ -22,6 +22,10 @@ class Skill:
 
         self.db_helper.setAll(data)
 
+    def get_item_location(self, item_key):
+        """ item_key must have all spaces replaced with underscores"""
+        return self.result.value[item_key]
+
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
         request_type = event['request']['type']
@@ -105,7 +109,7 @@ class Skill:
                         "Sorry, you need to tell me where that item is first.")
 
                 # check what we pulled from db
-                location = self.result.value[item_key]
+                location = self.get_item_location(item_key)
 
                 return responder.tell("The Item is %s, and the location is %s"
                                       % (item, location))
