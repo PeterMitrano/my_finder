@@ -129,6 +129,34 @@ class MyFinderTest(unittest.TestCase):
             self.assertIn(item,
                           response_dict['response']['outputSpeech']['ssml'])
 
+    @wip
+    def test_missing_location(self):
+            request = make_set_request('blue notebook', 'first pocket of my backpack')
+            request['request']['intent']['slots']['Location'].pop('value')
+            response_dict = lambda_function.handle_event(request, None)
+
+            self.assertTrue(responder.is_valid(response_dict))
+            self.assertFalse(response_dict['response']['shouldEndSession'])
+            self.assertIn('current_item', response_dict['sessionAttributes'])
+
+
+    def test_missing_item(self):
+            request = make_set_request('giant pan', 'leftmost cupboard')
+            request['request']['intent']['slots']['Item'].pop('value')
+            response_dict = lambda_function.handle_event(request, None)
+
+            self.assertTrue(responder.is_valid(response_dict))
+            self.assertFalse(response_dict['response']['shouldEndSession'])
+            self.assertIn('current_location', response_dict['sessionAttributes'])
+
+    def test_missing_item_and_location(self):
+            request = make_set_request('giant pan', 'leftmost cupboard')
+            request['request']['intent']['slots']['Item'].pop('value')
+            request['request']['intent']['slots']['Location'].pop('value')
+            response_dict = lambda_function.handle_event(request, None)
+
+            self.assertTrue(responder.is_valid(response_dict))
+            self.assertFalse(response_dict['response']['shouldEndSession'])
 
     def test_launch(self):
         delete_table(core.LOCAL_DB_URI)

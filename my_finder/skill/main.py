@@ -16,19 +16,38 @@ class Skill:
         elif request_type == 'IntentRequest':
 
             intent = event['request']['intent']['name']
+            slots = event['request']['intent']['slots']
 
             if intent == 'ItemIntent':
-                item = event['request']['intent']['slots']['Item']['value']
-                session_attributes['current_item'] = item
-                return responder.ask("What's the location?", session_attributes)
+                if 'value' in slots['Item']:
+                    item = slots['Item']['value']
+                    session_attributes['current_item'] = item
+                    return responder.ask("What's the location?", session_attributes)
+                else:
+                    return responder.ask("Sorry, what's the item?", session_attributes)
+
             elif intent == 'LocationIntent':
-                location = event['request']['intent']['slots']['Location']['value']
-                pass
+                location = slots['Location']['value']
 
             elif intent == 'SetLocationIntent':
-                item = event['request']['intent']['slots']['Item']['value']
-                location = event['request']['intent']['slots']['Location'][
-                    'value']
+                if 'value' in slots['Item']:
+                    item = slots['Item']['value']
+                else:
+                    item = None
+
+                if 'value' in slots['Location']:
+                    location = slots['Location']['value']
+                else:
+                    location = None
+
+                if not item and not location:
+                    return responder.ask("I didn't get an item or a location. What's the item?", session_attributes)
+                if not item and location:
+                    session_attributes['current_location'] = location
+                    return responder.ask("Sorry, what's the item?", session_attributes)
+                if not location and item:
+                    session_attributes['current_item'] = item
+                    return responder.ask("Sorry, what's the location?", session_attributes)
 
                 # make sure we replace spaces with underscores
                 item = item.replace(' ', '_')
