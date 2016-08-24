@@ -5,6 +5,9 @@ from my_finder.util import core
 from my_finder.util import responder
 from my_finder.util import dbhelper
 
+from fuzzywuzzy import process
+
+DEFINITELY_NOT_A_MATCH = 50
 
 class Skill:
     def add_item_location(self, item, location):
@@ -24,7 +27,19 @@ class Skill:
 
     def get_item_location(self, item_key):
         """ item_key must have all spaces replaced with underscores"""
-        return self.result.value[item_key]
+
+        if self.result.value is None:
+            return None
+
+        choices = self.result.value.keys()
+
+        choices.remove('userId')
+        true_item_key, confidence = process.extractOne(item_key, choices)
+
+        if confidence < DEFINITELY_NOT_A_MATCH:
+            return None
+
+        return true_item_key
 
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
@@ -104,12 +119,12 @@ class Skill:
                 # make sure we replace spaces with underscores
                 item_key = item.replace(' ', '_')
 
-                if self.result.value is None or item_key not in self.result.value:
-                    return responder.tell(
-                        "Sorry, you need to tell me where that item is first.")
-
                 # check what we pulled from db
                 location = self.get_item_location(item_key)
+
+                if location is None:
+                    return responder.tell(
+                        "Sorry, you need to tell me where that item is first.")
 
                 return responder.tell("The Item is %s, and the location is %s"
                                       % (item, location))
