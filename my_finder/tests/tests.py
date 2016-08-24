@@ -184,6 +184,8 @@ class MyFinderTest(unittest.TestCase):
                           response_dict['response']['outputSpeech']['ssml'])
             self.assertIn(location,
                           response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn('Not sure',
+                          response_dict['response']['outputSpeech']['ssml'])
 
     def test_nonextistant_item_amongst_other_items(self):
         delete_table(core.LOCAL_DB_URI)

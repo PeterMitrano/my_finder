@@ -30,7 +30,7 @@ class Skill:
         """ item_key must have all spaces replaced with underscores"""
 
         if self.result.value is None:
-            return None
+            return None, None
 
         choices = self.result.value.keys()
 
@@ -38,9 +38,9 @@ class Skill:
         true_item_key, confidence = process.extractOne(item_key, choices)
 
         if confidence < DEFINITELY_NOT_A_MATCH:
-            return None
+            return None, None
 
-        return self.result.value[true_item_key]
+        return true_item_key, self.result.value[true_item_key]
 
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
@@ -117,18 +117,23 @@ class Skill:
             elif intent == 'GetLocationIntent':
                 item = event['request']['intent']['slots']['Item']['value']
 
-                # make sure we replace spaces with underscores
+                # make sure we replace s_aces with underscores
                 item_key = item.replace(' ', '_')
 
                 # check what we pulled from db
-                location = self.get_item_location(item_key)
+                true_item_key, location = self.get_item_location(item_key)
 
                 if location is None:
                     return responder.tell(
                         "Sorry, you need to tell me where that item is first.")
 
-                return responder.tell("The Item is %s, and the location is %s"
-                                      % (item, location))
+                true_item = true_item_key.replace('_', ' ')
+                if true_item == item:
+                    return responder.tell("The Item is %s, and the location is %s"
+                                          % (true_item, location))
+                else:
+                    return responder.tell("Not sure where %s is. But I know %s has the location %s"
+                                      % (item, true_item, location))
 
     def handle_event(self, event, context):
         # check if we're debugging locally
