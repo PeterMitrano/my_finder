@@ -9,6 +9,7 @@ from fuzzywuzzy import process
 
 DEFINITELY_NOT_A_MATCH = 50
 
+
 class Skill:
     def add_item_location(self, item, location):
         # make sure we replace spaces with underscores

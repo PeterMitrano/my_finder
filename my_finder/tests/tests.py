@@ -134,8 +134,10 @@ def make_launch_request():
 
 class MyFinderTest(unittest.TestCase):
 
-    items = ["left sandel", "keys", "blue chair", "wallet", "yellow folder", "work shoes"]
-    similar_items = ["love sandel", "key", "chair", "my wallet", "yellow folders", "my worm shoe"]
+    items = ["left sandel", "keys", "blue chair", "wallet", "yellow folder",
+             "work shoes"]
+    similar_items = ["love sandel", "key", "chair", "my wallet",
+                     "yellow folders", "my worm shoe"]
     locations = ["dresser drawer", "bottom of closet", "backpack",
                  "under my desk"]
 
@@ -156,8 +158,10 @@ class MyFinderTest(unittest.TestCase):
             response_dict = lambda_function.handle_event(request, None)
 
             self.assertTrue(responder.is_valid(response_dict))
-            self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
-            self.assertIn(location, response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(item,
+                          response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(location,
+                          response_dict['response']['outputSpeech']['ssml'])
 
     def test_fuzzy(self):
         delete_table(core.LOCAL_DB_URI)
@@ -176,8 +180,10 @@ class MyFinderTest(unittest.TestCase):
             response_dict = lambda_function.handle_event(request, None)
 
             self.assertTrue(responder.is_valid(response_dict))
-            self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
-            self.assertIn(location, response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(item,
+                          response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(location,
+                          response_dict['response']['outputSpeech']['ssml'])
 
     def test_nonextistant_item_amongst_other_items(self):
         delete_table(core.LOCAL_DB_URI)
