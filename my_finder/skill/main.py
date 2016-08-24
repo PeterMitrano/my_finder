@@ -7,7 +7,7 @@ from my_finder.util import dbhelper
 
 from fuzzywuzzy import process
 
-DEFINITELY_NOT_A_MATCH = 50
+DEFINITELY_NOT_A_MATCH = 65
 
 
 class Skill:
