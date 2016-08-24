@@ -274,6 +274,22 @@ class MyFinderTest(unittest.TestCase):
         request = make_item_or_location_request('some jibberish message')
         response_dict = lambda_function.handle_event(request, None)
 
+        # give item
+        request = make_item_or_location_request(item)
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # give location
+        request = make_item_or_location_request(location)
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
-        self.assertIn("Try just launching the skill", response_dict['response']['outputSpeech']['ssml'])
+
+        result = lambda_function._skill.db_helper.getAll()
+        item_key = item.replace(' ', '_')
+        self.assertEqual(result.value[item_key], location)
+        self.assertIn('response', response_dict)
+

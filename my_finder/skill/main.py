@@ -56,8 +56,8 @@ class Skill:
             new = event['session']['new']
 
             if intent == 'ItemLocationItent' and new:
-                return responder.tell("I couldn't figure out what was the item and what was location. \
-                Try just launching the skill and stepping though item and location seperately.")
+                session_attributes['expecting_item'] = True
+                return responder.ask("I couldn't figure out what was the item and what was location. What's the item?")
 
             if intent == 'ItemLocationIntent':
                 if 'value' in slots['ItemLocation']:
