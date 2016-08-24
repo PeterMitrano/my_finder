@@ -131,7 +131,7 @@ class Skill:
 
                 if location is None:
                     return responder.tell(
-                        "Sorry, you need to tell me where that item is first.")
+                        "Sorry, you need to tell me where the item %s is." % item)
 
                 true_item = true_item_key.replace('_', ' ')
                 if true_item == item:

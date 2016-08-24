@@ -199,7 +199,7 @@ class MyFinderTest(unittest.TestCase):
 
         self.assertTrue(response_dict['response']['shouldEndSession'])
         self.assertTrue(responder.is_valid(response_dict))
-        self.assertIn("you need to tell me where that item is",
+        self.assertIn("you need to tell me where the item",
                       response_dict['response']['outputSpeech']['ssml'])
 
     def test_nonextistant_item(self):
@@ -209,7 +209,7 @@ class MyFinderTest(unittest.TestCase):
 
         self.assertTrue(response_dict['response']['shouldEndSession'])
         self.assertTrue(responder.is_valid(response_dict))
-        self.assertIn("you need to tell me where that item is",
+        self.assertIn("you need to tell me where the item",
                       response_dict['response']['outputSpeech']['ssml'])
 
     def test_missing_location(self):
