@@ -59,16 +59,16 @@ class Skill:
 
             new = event['session']['new']
 
-            if intent == 'ItemLocationIntent' and new:
+            if intent == 'ItemOrLocationIntent' and new:
                 session_attributes['expecting_item'] = True
                 return responder.ask("I couldn't figure out what was the item and what was location. What's the item?", session_attributes)
 
-            if intent == 'ItemLocationIntent':
-                if 'value' in slots['ItemLocation']:
-                    item_or_location = slots['ItemLocation']['value']
+            if intent == 'ItemOrLocationIntent':
+                if 'value' in slots['ItemOrLocation']:
+                    item_or_location = slots['ItemOrLocation']['value']
 
                     if session_attributes['expecting_item']:
-                        item = slots['ItemLocation']['value']
+                        item = slots['ItemOrLocation']['value']
                         session_attributes['current_item'] = item
                         session_attributes['expecting_item'] = False
                         session_attributes['expecting_location'] = True
@@ -76,7 +76,7 @@ class Skill:
                                              session_attributes)
 
                     elif session_attributes['expecting_location']:
-                        location = slots['ItemLocation']['value']
+                        location = slots['ItemOrLocation']['value']
                         session_attributes['current_location'] = location
                         item = session_attributes['current_item']
                         self.add_item_location(item, location)

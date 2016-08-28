@@ -29,10 +29,10 @@
             ]
         },
         {
-            "intent": "ItemLocationIntent",
+            "intent": "ItemOrLocationIntent",
             "slots": [
                 {
-                    "name": "ItemLocation",
+                    "name": "ItemOrLocation",
                     "type": "AMAZON.LITERAL"
                 }
             ]

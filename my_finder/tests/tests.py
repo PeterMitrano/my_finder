@@ -73,10 +73,10 @@ def make_item_or_location_request(item_or_location):
         "request": {
             "type": "IntentRequest",
             "intent": {
-                "name": "ItemLocationIntent",
+                "name": "ItemOrLocationIntent",
                 "slots": {
-                    "ItemLocation": {
-                        "name": "ItemLocation",
+                    "ItemOrLocation": {
+                        "name": "ItemOrLocation",
                         "value": item_or_location
                     }
                 }
@@ -261,6 +261,7 @@ class MyFinderTest(unittest.TestCase):
         # give location
         request = make_item_or_location_request(location)
         request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
