@@ -72,3 +72,8 @@ ItemOrLocationIntent {blue suitcase|ItemOrLocation}
 ItemOrLocationIntent {under my shelf|ItemOrLocation}
 ItemOrLocationIntent {inside my black bag|ItemOrLocation}
 ItemOrLocationIntent {next to the bed|ItemOrLocation}
+ItemOrLocationIntent {the top rack next to the closet|ItemOrLocation}
+ItemOrLocationIntent {behind the guitar on the floor|ItemOrLocation}
+ItemOrLocationIntent {hanging above my black jacket|ItemOrLocation}
+ItemOrLocationIntent {at the bottom of my dresser drawer|ItemOrLocation}
+ItemOrLocationIntent {in the coffee pot|ItemOrLocation}
