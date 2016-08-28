@@ -35,6 +35,10 @@ class Skill:
         choices = self.result.value.keys()
 
         choices.remove('userId')
+
+        if choices is None or len(choices) == 0:
+            return None, None
+
         true_item_key, confidence = process.extractOne(item_key, choices)
 
         if confidence < DEFINITELY_NOT_A_MATCH:
@@ -55,9 +59,9 @@ class Skill:
 
             new = event['session']['new']
 
-            if intent == 'ItemLocationItent' and new:
+            if intent == 'ItemLocationIntent' and new:
                 session_attributes['expecting_item'] = True
-                return responder.ask("I couldn't figure out what was the item and what was location. What's the item?")
+                return responder.ask("I couldn't figure out what was the item and what was location. What's the item?", session_attributes)
 
             if intent == 'ItemLocationIntent':
                 if 'value' in slots['ItemLocation']:

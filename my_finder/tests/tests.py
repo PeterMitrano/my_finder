@@ -270,12 +270,22 @@ class MyFinderTest(unittest.TestCase):
         self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
 
-    def accidental_item_or_location_intent_on_start(self):
+    def test_accidental_item_or_location_intent_on_start(self):
+        delete_table(core.LOCAL_DB_URI)
         request = make_item_or_location_request('some jibberish message')
         response_dict = lambda_function.handle_event(request, None)
 
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+        # this should responde gracefully so we can finish the interaction
+        # successfully
+
+        item = 'febreze bottle'
+        location = 'kitchen sink'
+
         # give item
         request = make_item_or_location_request(item)
+        request['session']['new'] = False
         request['session']['attributes'] = response_dict['sessionAttributes']
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
@@ -284,6 +294,7 @@ class MyFinderTest(unittest.TestCase):
         # give location
         request = make_item_or_location_request(location)
         request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
@@ -293,3 +304,18 @@ class MyFinderTest(unittest.TestCase):
         self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
 
+    def test_launch_then_get(self):
+        delete_table(core.LOCAL_DB_URI)
+
+        request = make_launch_request()
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        request = make_get_request('fake item')
+        response_dict = lambda_function.handle_event(request, None)
+
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertIn("you need to tell me where the item",
+                      response_dict['response']['outputSpeech']['ssml'])
