@@ -55,15 +55,17 @@ class Skill:
 
         elif request_type == 'IntentRequest':
             intent = event['request']['intent']['name']
-            slots = event['request']['intent']['slots']
+            slots = event['request']['intent'].get('slots', {})
 
             new = event['session']['new']
 
             if intent == 'ItemOrLocationIntent' and new:
                 session_attributes['expecting_item'] = True
-                return responder.ask("I couldn't figure out what was the item and what was location. What's the item?", session_attributes)
+                return responder.ask(
+                    "I couldn't figure out what was the item and what was location. What's the item?",
+                    session_attributes)
 
-            if intent == 'ItemOrLocationIntent':
+            elif intent == 'ItemOrLocationIntent':
                 if 'value' in slots['ItemOrLocation']:
                     item_or_location = slots['ItemOrLocation']['value']
 
@@ -135,15 +137,21 @@ class Skill:
 
                 if location is None:
                     return responder.tell(
-                        "Sorry, you need to tell me where the item %s is." % item)
+                        "Sorry, you need to tell me where the item %s is." %
+                        item)
 
                 true_item = true_item_key.replace('_', ' ')
                 if true_item == item:
-                    return responder.tell("The Item is %s, and the location is %s"
-                                          % (true_item, location))
+                    return responder.tell(
+                        "The Item is %s, and the location is %s" %
+                        (true_item, location))
                 else:
-                    return responder.tell("Not sure where %s is. But I know %s has the location %s"
-                                      % (item, true_item, location))
+                    return responder.tell(
+                        "Not sure where %s is. But I know %s has the location %s"
+                        % (item, true_item, location))
+
+            else:
+                return responder.tell("Something went wrong, and I couldn't understand your intent. Try again later")
 
     def handle_event(self, event, context):
         # check if we're debugging locally

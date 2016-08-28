@@ -326,3 +326,34 @@ class MyFinderTest(unittest.TestCase):
         self.assertTrue(responder.is_valid(response_dict))
         self.assertIn("you need to tell me where the item",
                       response_dict['response']['outputSpeech']['ssml'])
+
+    def test_invalid_intent(self):
+        request = {
+            "session": {
+                "sessionId": "SessionId.414a743a-9e9e-49b7-8364-0cf5a3657a5e",
+                "application": {
+                    "applicationId":
+                    "amzn1.ask.skill.4c1c3cfe-a0fd-4dbd-8b6e-29c29d9ae755"
+                },
+                "attributes": {},
+                "user": {
+                    "userId":
+                    "amzn1.ask.account.AFP3ZWPOS2BGJR7OWJZ3DHPKMOMH5D5WJ3SSUDI6AF4AAQWYGDYL62FAK3YBDNSPFXMPWZEJGHJHH5D6WYZSSKHYXI7GCJC2YIMCLC6WPFI2JAI2OBGZGNY4NGU6MPLDHOAIY2UOJZLMYNWAPGYORHRPJUGW65FF4KFDFAHATDTI4AT5G2BYECZI6NEJX62FET7HU476KCAPDEQ"
+                },
+                "new": True
+            },
+            "request": {
+                "type": "IntentRequest",
+                "requestId":
+                "EdwRequestId.d5f43e0f-d0e3-4db9-81bf-744a5ecc9c11",
+                "locale": "en-US",
+                "timestamp": "2016-08-28T17:08:12Z",
+                "intent": {
+                    "name": "NotAnIntent"
+                }
+            },
+            "version": "1.0"
+        }
+
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
