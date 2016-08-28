@@ -152,6 +152,7 @@ class MyFinderTest(unittest.TestCase):
             item_key = item.replace(' ', '_')
             self.assertEqual(result.value[item_key], location)
             self.assertIn('response', response_dict)
+            self.assertTrue(response_dict['response']['shouldEndSession'])
 
         for item, location in zip(self.items, self.locations):
             request = make_get_request(item)
@@ -162,6 +163,7 @@ class MyFinderTest(unittest.TestCase):
                           response_dict['response']['outputSpeech']['ssml'])
             self.assertIn(location,
                           response_dict['response']['outputSpeech']['ssml'])
+            self.assertTrue(response_dict['response']['shouldEndSession'])
 
     def test_fuzzy(self):
         delete_table(core.LOCAL_DB_URI)
@@ -174,6 +176,7 @@ class MyFinderTest(unittest.TestCase):
             item_key = item.replace(' ', '_')
             self.assertEqual(result.value[item_key], location)
             self.assertIn('response', response_dict)
+            self.assertTrue(response_dict['response']['shouldEndSession'])
 
         for item, location in zip(self.similar_items, self.locations):
             request = make_get_request(item)
@@ -186,6 +189,7 @@ class MyFinderTest(unittest.TestCase):
                           response_dict['response']['outputSpeech']['ssml'])
             self.assertIn('Not sure',
                           response_dict['response']['outputSpeech']['ssml'])
+            self.assertTrue(response_dict['response']['shouldEndSession'])
 
     def test_nonextistant_item_amongst_other_items(self):
         delete_table(core.LOCAL_DB_URI)
@@ -254,6 +258,7 @@ class MyFinderTest(unittest.TestCase):
         # give item
         request = make_item_or_location_request(item)
         request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertFalse(response_dict['response']['shouldEndSession'])
@@ -278,7 +283,7 @@ class MyFinderTest(unittest.TestCase):
 
         self.assertTrue(responder.is_valid(response_dict))
         self.assertFalse(response_dict['response']['shouldEndSession'])
-        # this should responde gracefully so we can finish the interaction
+        # this should respond gracefully so we can finish the interaction
         # successfully
 
         item = 'febreze bottle'
@@ -314,6 +319,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertFalse(response_dict['response']['shouldEndSession'])
 
         request = make_get_request('fake item')
+        request['session']['new'] = False
         response_dict = lambda_function.handle_event(request, None)
 
         self.assertTrue(response_dict['response']['shouldEndSession'])
