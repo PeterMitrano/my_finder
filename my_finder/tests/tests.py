@@ -132,7 +132,6 @@ def make_launch_request():
         }
     }
 
-@wip
 class EnvTest(unittest.TestCase):
     def test_env(self):
         self.assertIn('NLTK_DATA', os.environ)
@@ -141,6 +140,8 @@ class MyFinderTest(unittest.TestCase):
 
     items = ["left sandel", "keys", "blue chair", "wallet", "yellow folder",
              "work shoes"]
+    semantically_similar_items = ["left shoe", "remote", "blue stool", "purse",
+                     "yellow notebook", "work loafers"]
     similar_items = ["love sandel", "key", "chair", "my wallet",
                      "yellow folders", "my worm shoe"]
     locations = ["dresser drawer", "bottom of closet", "backpack",
@@ -167,6 +168,33 @@ class MyFinderTest(unittest.TestCase):
             self.assertIn(item,
                           response_dict['response']['outputSpeech']['ssml'])
             self.assertIn(location,
+                          response_dict['response']['outputSpeech']['ssml'])
+            self.assertTrue(response_dict['response']['shouldEndSession'])
+
+    @wip
+    def test_semantic_similarity(self):
+        delete_table(core.LOCAL_DB_URI)
+
+        for item, location in zip(self.items, self.locations):
+            request = make_set_request(item, location)
+            response_dict = lambda_function.handle_event(request, None)
+
+            result = lambda_function._skill.db_helper.getAll()
+            item_key = item.replace(' ', '_')
+            self.assertEqual(result.value[item_key], location)
+            self.assertIn('response', response_dict)
+            self.assertTrue(response_dict['response']['shouldEndSession'])
+
+        for item, location in zip(self.semantically_similar_items, self.locations):
+            request = make_get_request(item)
+            response_dict = lambda_function.handle_event(request, None)
+
+            self.assertTrue(responder.is_valid(response_dict))
+            self.assertIn(item,
+                          response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn(location,
+                          response_dict['response']['outputSpeech']['ssml'])
+            self.assertIn('Not sure',
                           response_dict['response']['outputSpeech']['ssml'])
             self.assertTrue(response_dict['response']['shouldEndSession'])
 

@@ -8,8 +8,6 @@ from my_finder.util import dbhelper
 from fuzzywuzzy import process
 from nltk.corpus import wordnet
 
-DEFINITELY_NOT_A_MATCH = 65
-
 
 class Skill:
     def add_item_location(self, item, location):
@@ -28,14 +26,23 @@ class Skill:
         self.db_helper.setAll(data)
 
     def compare_to_known_items(self, item_query, known_items):
-        fuzzy_similarity = process.extractOne(item_query, known_items)
+        fuzzy_item, fuzzy_similarity = process.extractOne(item_query, known_items)
+
+        if fuzzy_similarity > 75:
+            # good enough, probably transcription error
+            return fuzzy_item
 
         # go through each word and compare to another item
+        most_similar = 0
+        most_similar_item = None
         for known_item in known_items:
             # compare to the item we're given word-by-word
             nltk_similarity = 0
-            for word_query in item_query.split(' '):
-                for word_known in known_item.split(' '):
+
+            # need to fix this... it doesn't do what I think it does.
+
+            for word_query in item_query.split('_'):
+                for word_known in known_item.split('_'):
                     w1 = wordnet.synsets(word_query)
                     w2 = wordnet.synsets(word_known)
 
@@ -43,7 +50,16 @@ class Skill:
                         word_similarity = w1[0].wup_similarity(w2[0])
                         nltk_similarity += word_similarity
 
-        return fuzzy_similarity
+            logging.getLogger(core.LOGGER).warn("%f %s %s" % (nltk_similarity, known_item, item_query))
+            if nltk_similarity > most_similar:
+                most_similar = nltk_similarity
+                most_similar_item = known_item
+
+        if most_similar > 0.9:
+            # probably refers to the same item semantically
+            return most_similar_item
+
+        return None
 
     def get_item_location(self, item_query):
         """ item_query must have all spaces replaced with underscores"""
@@ -58,9 +74,11 @@ class Skill:
         if known_items is None or len(known_items) == 0:
             return None, None
 
-        true_item, confidence = self.compare_to_known_items(item_query, known_items)
+        true_item = self.compare_to_known_items(item_query, known_items)
 
-        if confidence < DEFINITELY_NOT_A_MATCH:
+        if not true_item:
+            # ok definitely not an item we know the location of
+            # we even tried fuzzy and nltk matching.
             return None, None
 
         return true_item, self.result.value[true_item]
