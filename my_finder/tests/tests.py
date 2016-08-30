@@ -1,4 +1,5 @@
 import boto3
+import os
 import unittest
 from nose.plugins.attrib import attr
 
@@ -131,6 +132,10 @@ def make_launch_request():
         }
     }
 
+@wip
+class EnvTest(unittest.TestCase):
+    def test_env(self):
+        self.assertIn('NLTK_DATA', os.environ)
 
 class MyFinderTest(unittest.TestCase):
 
