@@ -16,6 +16,9 @@ before_script:
 - cd db
 - java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -port 8000 &
 - cd ..
+- mkdir nltk
+- export NLTK_DATA=./nltk_data
+- python -m nltk.downloader wordnet
 
 script:
 - nosetests -x -v -a \!wip

@@ -23,3 +23,10 @@ _Your shoes are in the bottom of the cloest
 
 _Your keys are in my tableside drawer bin_
 
+## NLTK
+
+nltk is a dependency of this project. Make sure you run the following:
+
+    mkdir nltk_data
+    export NLTK_DATA ./nltk_data
+    python -m nltk.downloader wordnet

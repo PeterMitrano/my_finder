@@ -2,6 +2,7 @@
 *.pyc
 *.zip
 build
+nltk_data
 .venv
 .coverage
 .env

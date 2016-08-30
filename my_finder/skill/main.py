@@ -6,6 +6,7 @@ from my_finder.util import responder
 from my_finder.util import dbhelper
 
 from fuzzywuzzy import process
+from nltk.corpus import wordnet
 
 DEFINITELY_NOT_A_MATCH = 65
 
@@ -26,25 +27,43 @@ class Skill:
 
         self.db_helper.setAll(data)
 
-    def get_item_location(self, item_key):
-        """ item_key must have all spaces replaced with underscores"""
+    def compare_to_known_items(self, item_query, known_items):
+        fuzzy_similarity = process.extractOne(item_query, known_items)
+
+        # go through each word and compare to another item
+        for known_item in known_items:
+            # compare to the item we're given word-by-word
+            nltk_similarity = 0
+            for word_query in item_query.split(' '):
+                for word_known in known_item.split(' '):
+                    w1 = wordnet.synsets(word_query)
+                    w2 = wordnet.synsets(word_known)
+
+                    if len(w1) > 0 and len(w2) > 0:
+                        word_similarity = w1[0].wup_similarity(w2[0])
+                        nltk_similarity += word_similarity
+
+        return fuzzy_similarity
+
+    def get_item_location(self, item_query):
+        """ item_query must have all spaces replaced with underscores"""
 
         if self.result.value is None:
             return None, None
 
-        choices = self.result.value.keys()
+        known_items= self.result.value.keys()
 
-        choices.remove('userId')
+        known_items.remove('userId')
 
-        if choices is None or len(choices) == 0:
+        if known_items is None or len(known_items) == 0:
             return None, None
 
-        true_item_key, confidence = process.extractOne(item_key, choices)
+        true_item, confidence = self.compare_to_known_items(item_query, known_items)
 
         if confidence < DEFINITELY_NOT_A_MATCH:
             return None, None
 
-        return true_item_key, self.result.value[true_item_key]
+        return true_item, self.result.value[true_item]
 
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
