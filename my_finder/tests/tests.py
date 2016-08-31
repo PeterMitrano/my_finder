@@ -138,7 +138,7 @@ class EnvTest(unittest.TestCase):
 
 class MyFinderTest(unittest.TestCase):
 
-    items = ["left sandel", "keys", "blue chair", "wallet", "yellow folder",
+    items = ["left sandal", "keys", "blue chair", "wallet", "yellow folder",
              "work shoes"]
     semantically_similar_items = ["left shoe", "remote", "blue stool", "purse",
                      "yellow notebook", "work loafers"]
@@ -171,7 +171,6 @@ class MyFinderTest(unittest.TestCase):
                           response_dict['response']['outputSpeech']['ssml'])
             self.assertTrue(response_dict['response']['shouldEndSession'])
 
-    @wip
     def test_semantic_similarity(self):
         delete_table(core.LOCAL_DB_URI)
 
