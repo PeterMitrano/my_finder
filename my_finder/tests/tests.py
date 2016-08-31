@@ -376,6 +376,41 @@ class MyFinderTest(unittest.TestCase):
         self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
 
+    def test_accidental_item_or_location_intent_asking(self):
+        delete_table(core.LOCAL_DB_URI)
+        item = 'febreze bottle'
+        location = 'kitchen sink'
+        request = make_set_request(item, location)
+        response_dict = lambda_function.handle_event(request, None)
+        result = lambda_function._skill.db_helper.getAll()
+        item_key = item.replace(' ', '_')
+        self.assertEqual(result.value[item_key], location)
+
+        request = make_item_or_location_request('some jibberish message')
+        response_dict = lambda_function.handle_event(request, None)
+
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+        # this should respond gracefully so we can finish the interaction
+        # successfully
+
+        # we're asking where item is
+        request = make_ask_or_tell_request("asking")
+        request['session']['new'] = False
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # give item
+        request = make_item_or_location_request(item)
+        request['session']['new'] = False
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
+
     def test_launch_then_get(self):
         delete_table(core.LOCAL_DB_URI)
 
