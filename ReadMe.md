@@ -30,3 +30,5 @@ nltk is a dependency of this project. Make sure you run the following:
     mkdir nltk_data
     export NLTK_DATA ./nltk_data
     python -m nltk.downloader wordnet
+
+Because of wordnet, make sure to use as much RAM as possible on lambda.
