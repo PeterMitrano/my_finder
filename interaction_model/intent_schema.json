@@ -1,10 +1,13 @@
 {
     "intents": [
         {
-            "intent": "AMAZON.YesIntent"
-        },
-        {
-            "intent": "AMAZON.NoIntent"
+            "intent": "AskOrTellIntent",
+            "slots": [
+                {
+                    "name": "AskOrTell",
+                    "type": "AskOrTellType"
+                }
+            ]
         },
         {
             "intent": "SetLocationIntent",

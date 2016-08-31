@@ -96,11 +96,34 @@ class Skill:
 
         return true_item, self.result.value[true_item]
 
+    def get_intent(self, item):
+        # make sure we replace s_aces with underscores
+        item_key = item.replace(' ', '_')
+
+        # check what we pulled from db
+        true_item_key, location = self.get_item_location(item_key)
+
+        if location is None:
+            return responder.tell(
+                "Sorry, you need to tell me where the item %s is." %
+                item)
+
+        true_item = true_item_key.replace('_', ' ')
+        if true_item == item:
+            return responder.tell(
+                "The Item is %s, and the location is %s" %
+                (true_item, location))
+        else:
+            return responder.tell(
+                "Not sure where %s is. But I know %s has the location %s"
+                % (item, true_item, location))
+
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
         request_type = event['request']['type']
         if request_type == 'LaunchRequest':
             session_attributes['expecting_item'] = True
+            session_attributes['telling'] = True
             return responder.ask("What's the item?", session_attributes)
 
         elif request_type == 'IntentRequest':
@@ -110,9 +133,9 @@ class Skill:
             new = event['session']['new']
 
             if intent == 'ItemOrLocationIntent' and new:
-                session_attributes['expecting_item'] = True
+                session_attributes['confirm_get_location_intent'] = True
                 return responder.ask(
-                    "I couldn't figure out what was the item and what was location. What's the item?",
+                    "I couldn't figure out what you meant. Are you asking about an item or telling?",
                     session_attributes)
 
             elif intent == 'ItemOrLocationIntent':
@@ -120,15 +143,22 @@ class Skill:
                     item_or_location = slots['ItemOrLocation']['value']
 
                     if session_attributes['expecting_item']:
-                        item = slots['ItemOrLocation']['value']
-                        session_attributes['current_item'] = item
-                        session_attributes['expecting_item'] = False
-                        session_attributes['expecting_location'] = True
-                        return responder.ask("What's the location?",
-                                             session_attributes)
+                        item = item_or_location
+                        if 'telling' in session_attributes:
+                            session_attributes['current_item'] = item
+                            session_attributes['expecting_item'] = False
+                            session_attributes['expecting_location'] = True
+                            return responder.ask("What's the location?",
+                                                 session_attributes)
+                        elif 'asking' in session_attributes:
+                            return self.get_intent(item)
+                        else:
+                            return responder.ask(
+                                    "Sorry, please say either, asking, or, telling",
+                                    session_attributes)
 
                     elif session_attributes['expecting_location']:
-                        location = slots['ItemOrLocation']['value']
+                        location = item_or_location
                         session_attributes['current_location'] = location
                         item = session_attributes['current_item']
                         self.add_item_location(item, location)
@@ -178,30 +208,23 @@ class Skill:
 
             elif intent == 'GetLocationIntent':
                 item = event['request']['intent']['slots']['Item']['value']
+                return self.get_intent(item)
 
-                # make sure we replace s_aces with underscores
-                item_key = item.replace(' ', '_')
-
-                # check what we pulled from db
-                true_item_key, location = self.get_item_location(item_key)
-
-                if location is None:
-                    return responder.tell(
-                        "Sorry, you need to tell me where the item %s is." %
-                        item)
-
-                true_item = true_item_key.replace('_', ' ')
-                if true_item == item:
-                    return responder.tell(
-                        "The Item is %s, and the location is %s" %
-                        (true_item, location))
+            elif intent == 'AskOrTellIntent':
+                ask_or_tell = slots['AskOrTell']['value']
+                if ask_or_tell == 'asking':
+                    session_attributes['expecting_item'] = True
+                    session_attributes['asking'] = True
+                    return responder.ask("What's the item?", session_attributes)
+                elif ask_or_tell == 'telling':
+                    session_attributes['expecting_item'] = True
+                    session_attributes['telling'] = True
+                    return responder.ask("What's the item?", session_attributes)
                 else:
-                    return responder.tell(
-                        "Not sure where %s is. But I know %s has the location %s"
-                        % (item, true_item, location))
+                    return responder.ask("Sorry, please say either, asking, or, telling", session_attributes)
 
-            else:
-                return responder.tell("Something went wrong, and I couldn't understand your intent. Try again later")
+            # fall through
+            return responder.tell("Something went wrong, and I couldn't understand your intent. Try again later")
 
     def handle_event(self, event, context):
         # check if we're debugging locally

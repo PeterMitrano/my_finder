@@ -85,6 +85,32 @@ def make_item_or_location_request(item_or_location):
         }
     }
 
+def make_ask_or_tell_request(asking_or_telling):
+    return {
+        "version": 1.0,
+        "session": {
+            "new": True,
+            "sessionId": "0",
+            "application": {
+                "applicationId": core.APP_ID
+            },
+            "user": {
+                "userId": "test_user"
+            }
+        },
+        "request": {
+            "type": "IntentRequest",
+            "intent": {
+                "name": "AskOrTellIntent",
+                "slots": {
+                    "AskOrTell": {
+                        "name": "AskOrTell",
+                        "value": asking_or_telling
+                    }
+                }
+            }
+        }
+    }
 
 def make_get_request(item):
     return {
@@ -308,7 +334,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
 
-    def test_accidental_item_or_location_intent_on_start(self):
+    def test_accidental_item_or_location_intent_telling(self):
         delete_table(core.LOCAL_DB_URI)
         request = make_item_or_location_request('some jibberish message')
         response_dict = lambda_function.handle_event(request, None)
@@ -320,6 +346,14 @@ class MyFinderTest(unittest.TestCase):
 
         item = 'febreze bottle'
         location = 'kitchen sink'
+
+        # we're telling where item is
+        request = make_ask_or_tell_request("telling")
+        request['session']['new'] = False
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
 
         # give item
         request = make_item_or_location_request(item)
