@@ -1,0 +1,63 @@
+AskOrTellType
+
+asking
+telling
+---
+
+ItemType
+
+red helmet
+laptop
+keys
+wallet
+shoes
+black coat
+laptop
+keys
+shoes
+black coat
+pencil case
+fluffy yellow jacket
+---
+
+
+LocationType
+
+closet
+shelf
+blue suitcase
+under my shelf
+inside my black bag
+next to the bed
+the top rack next to the closet
+behind the guitar on the floor
+hanging above my black jacket
+at the bottom of my dresser drawer
+in the coffee pot
+---
+
+ItemOrLocationType
+
+closet
+shelf
+blue suitcase
+under my shelf
+inside my black bag
+next to the bed
+the top rack next to the closet
+behind the guitar on the floor
+hanging above my black jacket
+at the bottom of my dresser drawer
+in the coffee pot
+red helmet
+laptop
+keys
+wallet
+shoes
+black coat
+laptop
+keys
+shoes
+black coat
+pencil case
+fluffy yellow jacket

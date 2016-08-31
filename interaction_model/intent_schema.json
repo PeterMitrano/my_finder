@@ -14,11 +14,11 @@
             "slots": [
                 {
                     "name": "Item",
-                    "type": "AMAZON.LITERAL"
+                    "type": "ItemType"
                 },
                 {
                     "name": "Location",
-                    "type": "AMAZON.LITERAL"
+                    "type": "LocationType"
                 }
             ]
         },
@@ -27,7 +27,7 @@
             "slots": [
                 {
                     "name": "Item",
-                    "type": "AMAZON.LITERAL"
+                    "type": "ItemType"
                 }
             ]
         },
@@ -36,7 +36,7 @@
             "slots": [
                 {
                     "name": "ItemOrLocation",
-                    "type": "AMAZON.LITERAL"
+                    "type": "ItemOrLocationType"
                 }
             ]
         }
