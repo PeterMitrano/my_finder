@@ -85,6 +85,7 @@ def make_item_or_location_request(item_or_location):
         }
     }
 
+
 def make_ask_or_tell_request(asking_or_telling):
     return {
         "version": 1.0,
@@ -111,6 +112,7 @@ def make_ask_or_tell_request(asking_or_telling):
             }
         }
     }
+
 
 def make_get_request(item):
     return {
@@ -158,16 +160,18 @@ def make_launch_request():
         }
     }
 
+
 class EnvTest(unittest.TestCase):
     def test_env(self):
         self.assertIn('NLTK_DATA', os.environ)
+
 
 class MyFinderTest(unittest.TestCase):
 
     items = ["left sandal", "keys", "blue chair", "wallet", "yellow folder",
              "work shoes"]
     semantically_similar_items = ["left shoe", "remote", "blue stool", "purse",
-                     "yellow notebook", "work loafers"]
+                                  "yellow notebook", "work loafers"]
     similar_items = ["love sandel", "key", "chair", "my wallet",
                      "yellow folders", "my worm shoe"]
     locations = ["dresser drawer", "bottom of closet", "backpack",
@@ -210,7 +214,8 @@ class MyFinderTest(unittest.TestCase):
             self.assertIn('response', response_dict)
             self.assertTrue(response_dict['response']['shouldEndSession'])
 
-        for item, location in zip(self.semantically_similar_items, self.locations):
+        for item, location in zip(self.semantically_similar_items,
+                                  self.locations):
             request = make_get_request(item)
             response_dict = lambda_function.handle_event(request, None)
 
@@ -291,8 +296,10 @@ class MyFinderTest(unittest.TestCase):
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
-        self.assertIn('blue notebook', response_dict['response']['outputSpeech']['ssml'])
-        self.assertIn('first pocket of my backpack', response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn('blue notebook',
+                      response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn('first pocket of my backpack',
+                      response_dict['response']['outputSpeech']['ssml'])
 
     def test_missing_item(self):
         request = make_set_request('giant pan', 'leftmost cupboard')
@@ -310,8 +317,8 @@ class MyFinderTest(unittest.TestCase):
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
-        self.assertIn('some item', response_dict['response']['outputSpeech']['ssml'])
-
+        self.assertIn('some item',
+                      response_dict['response']['outputSpeech']['ssml'])
 
     def test_missing_item_and_location(self):
         request = make_set_request('giant pan', 'leftmost cupboard')
@@ -337,8 +344,10 @@ class MyFinderTest(unittest.TestCase):
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
-        self.assertIn('some item', response_dict['response']['outputSpeech']['ssml'])
-        self.assertIn('some location', response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn('some item',
+                      response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn('some location',
+                      response_dict['response']['outputSpeech']['ssml'])
 
     def test_launch(self):
         delete_table(core.LOCAL_DB_URI)

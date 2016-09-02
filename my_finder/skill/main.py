@@ -8,7 +8,8 @@ from my_finder.util import dbhelper
 from fuzzywuzzy import process
 from nltk.corpus import wordnet
 
-FUZZY_SIMILARITY_THRESHOLD = 65 # handles transcriptions errors
+FUZZY_SIMILARITY_THRESHOLD = 65  # handles transcriptions errors
+
 
 class Skill:
     def add_item_location(self, item, location):
@@ -27,7 +28,8 @@ class Skill:
         self.db_helper.setAll(data)
 
     def compare_to_known_items(self, item_query, known_items):
-        fuzzy_item, fuzzy_similarity = process.extractOne(item_query, known_items)
+        fuzzy_item, fuzzy_similarity = process.extractOne(item_query,
+                                                          known_items)
 
         if fuzzy_similarity > FUZZY_SIMILARITY_THRESHOLD:
             # good enough, probably transcription error
@@ -61,9 +63,9 @@ class Skill:
                 # add this up to score the similarity of everything
                 known_item_similarity += s
 
-
             avg_similarity = known_item_similarity / len(item_query_words)
-            logging.getLogger(core.LOGGER).warn("%f %s %s" % (avg_similarity, known_item, item_query))
+            logging.getLogger(core.LOGGER).warn("%f %s %s" % (
+                avg_similarity, known_item, item_query))
             if avg_similarity > most_similar:
                 most_similar = avg_similarity
                 most_similar_item = known_item
@@ -80,7 +82,7 @@ class Skill:
         if self.result.value is None:
             return None, None
 
-        known_items= self.result.value.keys()
+        known_items = self.result.value.keys()
 
         known_items.remove('userId')
 
@@ -105,18 +107,16 @@ class Skill:
 
         if location is None:
             return responder.tell(
-                "Sorry, you need to tell me where the item %s is." %
-                item)
+                "Sorry, you need to tell me where the item %s is." % item)
 
         true_item = true_item_key.replace('_', ' ')
         if true_item == item:
-            return responder.tell(
-                "The Item is %s, and the location is %s" %
-                (true_item, location))
+            return responder.tell("The Item is %s, and the location is %s" %
+                                  (true_item, location))
         else:
             return responder.tell(
-                "Not sure where %s is. But I know %s has the location %s"
-                % (item, true_item, location))
+                "Not sure where %s is. But I know %s has the location %s" %
+                (item, true_item, location))
 
     def handle_intent(self, event, session_attributes):
         # handle simple launch request
@@ -150,7 +150,8 @@ class Skill:
                             session_attributes['expecting_location'] = True
 
                             if 'current_location' in session_attributes:
-                                location = session_attributes['current_location']
+                                location = session_attributes[
+                                    'current_location']
                                 return responder.tell(
                                     "item is %s and location is %s. Got it" %
                                     (item, location))
@@ -161,8 +162,8 @@ class Skill:
                             return self.get_intent(item)
                         else:
                             return responder.ask(
-                                    "Sorry, please say either, asking, or, telling",
-                                    session_attributes)
+                                "Sorry, please say either, asking, or, telling",
+                                session_attributes)
 
                     elif session_attributes.get('expecting_location', False):
                         location = item_or_location
@@ -227,16 +228,21 @@ class Skill:
                 if ask_or_tell == 'asking':
                     session_attributes['expecting_item'] = True
                     session_attributes['asking'] = True
-                    return responder.ask("What's the item?", session_attributes)
+                    return responder.ask("What's the item?",
+                                         session_attributes)
                 elif ask_or_tell == 'telling':
                     session_attributes['expecting_item'] = True
                     session_attributes['telling'] = True
-                    return responder.ask("What's the item?", session_attributes)
+                    return responder.ask("What's the item?",
+                                         session_attributes)
                 else:
-                    return responder.ask("Sorry, please say either, asking, or, telling", session_attributes)
+                    return responder.ask(
+                        "Sorry, please say either, asking, or, telling",
+                        session_attributes)
 
             # fall through
-            return responder.tell("Something went wrong, and I couldn't understand your intent. Try again later")
+            return responder.tell(
+                "Something went wrong, and I couldn't understand your intent. Try again later")
 
     def handle_event(self, event, context):
         # check if we're debugging locally
