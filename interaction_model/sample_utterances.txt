@@ -1,7 +1,17 @@
+SetLocationIntent I placed {Item} {Location}
+SetLocationIntent I left {Item} {Location}
+SetLocationIntent I put {Item} {Location}
 SetLocationIntent I placed my {Item} {Location}
 SetLocationIntent I left my {Item} {Location}
 SetLocationIntent I put my {Item} {Location}
 
+GetLocationIntent where I left {Item}
+GetLocationIntent where I put {Item}
+GetLocationIntent where I placed {Item}
+GetLocationIntent where {Item} is
+GetLocationIntent where is {Item}
+GetLocationIntent where are {Item}
+GetLocationIntent where {Item} are
 GetLocationIntent where I left my {Item}
 GetLocationIntent where I put my {Item}
 GetLocationIntent where I placed my {Item}
