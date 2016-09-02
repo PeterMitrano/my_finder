@@ -23,5 +23,6 @@ def handle(intent, slots, session_attributes, db):
                                  session_attributes)
 
     # fall through
-    return responder.tell(
-        "Something went wrong, and I couldn't understand your intent. Try again later")
+    return responder.ask(
+        "Hmm. I expected you to tell me a location. Say the location now, or say quit to start over.",
+        session_attributes)

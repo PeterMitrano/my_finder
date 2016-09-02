@@ -463,6 +463,9 @@ class MyFinderTest(unittest.TestCase):
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn(location,
+                      response_dict['response']['outputSpeech']['ssml'])
 
         result = lambda_function._skill.db.helper.getAll()
         item_key = item.replace(' ', '_')
