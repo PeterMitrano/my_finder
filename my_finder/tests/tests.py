@@ -284,6 +284,16 @@ class MyFinderTest(unittest.TestCase):
         self.assertFalse(response_dict['response']['shouldEndSession'])
         self.assertIn('current_item', response_dict['sessionAttributes'])
 
+        # finish convo--say location
+        request = make_item_or_location_request('first pocket of my backpack')
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertIn('blue notebook', response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn('first pocket of my backpack', response_dict['response']['outputSpeech']['ssml'])
+
     def test_missing_item(self):
         request = make_set_request('giant pan', 'leftmost cupboard')
         request['request']['intent']['slots']['Item'].pop('value')
@@ -293,6 +303,16 @@ class MyFinderTest(unittest.TestCase):
         self.assertFalse(response_dict['response']['shouldEndSession'])
         self.assertIn('current_location', response_dict['sessionAttributes'])
 
+        # Finish the converstaion--say item
+        request = make_item_or_location_request('some item')
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertIn('some item', response_dict['response']['outputSpeech']['ssml'])
+
+
     def test_missing_item_and_location(self):
         request = make_set_request('giant pan', 'leftmost cupboard')
         request['request']['intent']['slots']['Item'].pop('value')
@@ -301,6 +321,24 @@ class MyFinderTest(unittest.TestCase):
 
         self.assertTrue(responder.is_valid(response_dict))
         self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # finish the conversation--say item
+        request = make_item_or_location_request('some item')
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # say location
+        request = make_item_or_location_request('some location')
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertIn('some item', response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn('some location', response_dict['response']['outputSpeech']['ssml'])
 
     def test_launch(self):
         delete_table(core.LOCAL_DB_URI)

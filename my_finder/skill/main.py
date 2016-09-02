@@ -142,14 +142,21 @@ class Skill:
                 if 'value' in slots['ItemOrLocation']:
                     item_or_location = slots['ItemOrLocation']['value']
 
-                    if session_attributes['expecting_item']:
+                    if session_attributes.get('expecting_item', False):
                         item = item_or_location
                         if 'telling' in session_attributes:
                             session_attributes['current_item'] = item
                             session_attributes['expecting_item'] = False
                             session_attributes['expecting_location'] = True
-                            return responder.ask("What's the location?",
-                                                 session_attributes)
+
+                            if 'current_location' in session_attributes:
+                                location = session_attributes['current_location']
+                                return responder.tell(
+                                    "item is %s and location is %s. Got it" %
+                                    (item, location))
+                            else:
+                                return responder.ask("What's the location?",
+                                                     session_attributes)
                         elif 'asking' in session_attributes:
                             return self.get_intent(item)
                         else:
@@ -157,7 +164,7 @@ class Skill:
                                     "Sorry, please say either, asking, or, telling",
                                     session_attributes)
 
-                    elif session_attributes['expecting_location']:
+                    elif session_attributes.get('expecting_location', False):
                         location = item_or_location
                         session_attributes['current_location'] = location
                         item = session_attributes['current_item']
@@ -190,14 +197,19 @@ class Skill:
                     location = None
 
                 if not item and not location:
+                    session_attributes['expecting_item'] = True
+                    session_attributes['telling'] = True
                     return responder.ask(
                         "I didn't get an item or a location. What's the item?",
                         session_attributes)
                 if not item and location:
+                    session_attributes['expecting_item'] = True
                     session_attributes['current_location'] = location
+                    session_attributes['telling'] = True
                     return responder.ask("Sorry, what's the item?",
                                          session_attributes)
                 if not location and item:
+                    session_attributes['expecting_location'] = True
                     session_attributes['current_item'] = item
                     return responder.ask("Sorry, what's the location?",
                                          session_attributes)
