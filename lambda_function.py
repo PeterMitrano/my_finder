@@ -3,7 +3,7 @@ import logging
 from my_finder.skill import main
 from my_finder.util import core
 
-_skill = {}
+_skill = None
 
 
 def handle_event(event, context):

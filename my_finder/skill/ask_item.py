@@ -10,7 +10,7 @@ def handle(intent, slots, session_attributes, db):
 
         if item:
             if 'asking' in session_attributes:
-                asking_response._handle(item, db)
+                return asking_response._handle(item, db)
             elif 'telling' in session_attributes:
                 session_attributes['current_item'] = item
                 if 'current_location' in session_attributes:
@@ -19,9 +19,10 @@ def handle(intent, slots, session_attributes, db):
                     location = session_attributes['current_location']
                     return telling_response.add_item_location(item, location, db)
                 else:
+                    session_attributes['STATE'] = core.STATES.ASK_LOCATION
                     return responder.ask("What's the location?", session_attributes)
         else:
             return responder.ask("Sorry, what's the item?", session_attributes)
 
-    responder.tell(
+    return responder.tell(
         "Something went wrong, and I couldn't understand your intent. Try again later")

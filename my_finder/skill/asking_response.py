@@ -56,7 +56,7 @@ def compare_to_known_items(item_query, known_items):
     return None
 
 
-def get_item_location(db, item_query):
+def __get_item_location(db, item_query):
     """ item_query must have all spaces replaced with underscores"""
 
     if db.result.value is None:
@@ -79,12 +79,12 @@ def get_item_location(db, item_query):
     return true_item, db.result.value[true_item]
 
 
-def _handle(db, item):
+def _handle(item, db):
     # make sure we replace spaces with underscores
     item_key = item.replace(' ', '_')
 
     # check what we pulled from db
-    true_item_key, location = get_item_location(db, item_key)
+    true_item_key, location = __get_item_location(db, item_key)
 
     if location is None:
         return responder.tell(
@@ -102,4 +102,4 @@ def _handle(db, item):
 
 def handle(intent, slots, session_attributes, db):
     item = slots['Item']['value']
-    _handle(item,db)
+    return _handle(item,db)

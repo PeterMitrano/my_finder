@@ -349,7 +349,44 @@ class MyFinderTest(unittest.TestCase):
         self.assertIn('some location',
                       response_dict['response']['outputSpeech']['ssml'])
 
-    def test_launch(self):
+    def test_launch_asking(self):
+        delete_table(core.LOCAL_DB_URI)
+
+        # put the item so we can test asking for it
+        item = 'amazno echo'
+        location = 'right side of my desk'
+
+        request = make_set_request(item, location)
+        response_dict = lambda_function.handle_event(request, None)
+
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+
+        request = make_launch_request()
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # ok now we're asking
+        request = make_ask_or_tell_request("asking")
+        request['session']['new'] = False
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+
+        # give item
+        request = make_item_or_location_request(item)
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertIn(item, response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn(location, response_dict['response']['outputSpeech']['ssml'])
+
+    def test_launch_telling(self):
         delete_table(core.LOCAL_DB_URI)
 
         item = 'pencil case'
@@ -359,6 +396,15 @@ class MyFinderTest(unittest.TestCase):
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
         self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # we're telling
+        request = make_ask_or_tell_request("telling")
+        request['session']['new'] = False
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
 
         # give item
         request = make_item_or_location_request(item)
@@ -382,6 +428,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertIn('response', response_dict)
 
     def test_accidental_item_or_location_intent_telling(self):
+        """for when you tried to tell about an item, but it gets an ItemOrLocationIntent accidentally"""
         delete_table(core.LOCAL_DB_URI)
         request = make_item_or_location_request('some jibberish message')
         response_dict = lambda_function.handle_event(request, None)
@@ -424,15 +471,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertIn('response', response_dict)
 
     def test_accidental_item_or_location_intent_asking(self):
-        delete_table(core.LOCAL_DB_URI)
-        item = 'febreze bottle'
-        location = 'kitchen sink'
-        request = make_set_request(item, location)
-        response_dict = lambda_function.handle_event(request, None)
-        result = lambda_function._skill.db.helper.getAll()
-        item_key = item.replace(' ', '_')
-        self.assertEqual(result.value[item_key], location)
-
+        """for item location, but it gets an ItemOrLocationIntent accidentally"""
         request = make_item_or_location_request('some jibberish message')
         response_dict = lambda_function.handle_event(request, None)
 
@@ -450,6 +489,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertFalse(response_dict['response']['shouldEndSession'])
 
         # give item
+        item = 'laptop case'
         request = make_item_or_location_request(item)
         request['session']['new'] = False
         request['session']['attributes'] = response_dict['sessionAttributes']
@@ -467,12 +507,13 @@ class MyFinderTest(unittest.TestCase):
         self.assertFalse(response_dict['response']['shouldEndSession'])
 
         request = make_get_request('fake item')
+        request['session']['attributes'] = response_dict['sessionAttributes']
         request['session']['new'] = False
         response_dict = lambda_function.handle_event(request, None)
 
-        self.assertTrue(response_dict['response']['shouldEndSession'])
+        self.assertFalse(response_dict['response']['shouldEndSession'])
         self.assertTrue(responder.is_valid(response_dict))
-        self.assertIn("you need to tell me where the item",
+        self.assertIn("asking or telling",
                       response_dict['response']['outputSpeech']['ssml'])
 
     def test_invalid_intent(self):

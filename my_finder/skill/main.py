@@ -1,4 +1,4 @@
-import namedtuple
+from collections import namedtuple
 import logging
 
 from my_finder import stage
@@ -36,6 +36,8 @@ class Skill:
 
             if new:
                 if intent == 'SetLocationIntent':
+                    session_attributes['telling'] = True
+
                     # collect item and or location
                     # hopefully both...
                     if 'value' in slots['Item']:
@@ -55,10 +57,12 @@ class Skill:
                             session_attributes)
                     if not item and location:
                         session_attributes['STATE'] = core.STATES.ASK_ITEM
+                        session_attributes['current_location'] = location
                         return responder.ask("Sorry, what's the item?",
                                              session_attributes)
                     if not location and item:
                         session_attributes['STATE'] = core.STATES.ASK_LOCATION
+                        session_attributes['current_item'] = item
                         return responder.ask("Sorry, what's the location?",
                                              session_attributes)
 
@@ -66,14 +70,19 @@ class Skill:
                     return responder.tell('Item is %s. Location is %s. Got it.'
                                           % (item, location))
 
-                if intent == 'GetLocationIntent':
-                    asking_response.handle(intent, slots, session_attributes, self.db)
+                elif intent == 'GetLocationIntent':
+                    return asking_response.handle(intent, slots, session_attributes, self.db)
+
+                elif intent == 'ItemOrLocationIntent':
+                    session_attributes['STATE'] = core.STATES.ASK_OR_TELL
+                    return responder.ask("Sorry, are you asking about an item or telling?", session_attributes)
 
             else:
                 state = session_attributes['STATE']
-
-                states['state'].handle(intent, slots, session_attributes,
+                return states[state].handle(intent, slots, session_attributes,
                                        self.db)
+
+        return responder.tell("My programmer made a mistake. Please try again later when this skill has been fixed")
 
     def handle_event(self, event, context):
         # check if we're debugging locally

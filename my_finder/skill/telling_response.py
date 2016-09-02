@@ -14,6 +14,7 @@ def add_item_location(item, location, db):
     data[item] = location
 
     db.helper.setAll(data)
+    item = item.replace('_', ' ')
     return responder.tell('Item is %s. Location is %s. Got it.' %
                           (item, location))
 
