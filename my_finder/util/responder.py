@@ -4,6 +4,9 @@ def is_valid(response):
             return False
         if response['response']['outputSpeech']['type'] != 'SSML':
             return False
+        if "Something went wrong" in response['response']['outputSpeech'][
+                'ssml']:
+            return False
     except Exception:
         return False
 
