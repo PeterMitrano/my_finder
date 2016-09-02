@@ -17,10 +17,12 @@ def handle(intent, slots, session_attributes, db):
                     # we've got all we need
                     session_attributes['STATE'] = core.STATES.TELLING_RESPONSE
                     location = session_attributes['current_location']
-                    return telling_response.add_item_location(item, location, db)
+                    return telling_response.add_item_location(item, location,
+                                                              db)
                 else:
                     session_attributes['STATE'] = core.STATES.ASK_LOCATION
-                    return responder.ask("What's the location?", session_attributes)
+                    return responder.ask("What's the location?",
+                                         session_attributes)
         else:
             return responder.ask("Sorry, what's the item?", session_attributes)
 

@@ -7,6 +7,7 @@ from my_finder.util import responder
 from my_finder.util import core
 import logging
 
+
 def compare_to_known_items(item_query, known_items):
     fuzzy_item, fuzzy_similarity = process.extractOne(item_query, known_items)
 
@@ -102,4 +103,4 @@ def _handle(item, db):
 
 def handle(intent, slots, session_attributes, db):
     item = slots['Item']['value']
-    return _handle(item,db)
+    return _handle(item, db)

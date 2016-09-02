@@ -71,18 +71,22 @@ class Skill:
                                           % (item, location))
 
                 elif intent == 'GetLocationIntent':
-                    return asking_response.handle(intent, slots, session_attributes, self.db)
+                    return asking_response.handle(intent, slots,
+                                                  session_attributes, self.db)
 
                 elif intent == 'ItemOrLocationIntent':
                     session_attributes['STATE'] = core.STATES.ASK_OR_TELL
-                    return responder.ask("Sorry, are you asking about an item or telling?", session_attributes)
+                    return responder.ask(
+                        "Sorry, are you asking about an item or telling?",
+                        session_attributes)
 
             else:
                 state = session_attributes['STATE']
                 return states[state].handle(intent, slots, session_attributes,
-                                       self.db)
+                                            self.db)
 
-        return responder.tell("My programmer made a mistake. Please try again later when this skill has been fixed")
+        return responder.tell(
+            "My programmer made a mistake. Please try again later when this skill has been fixed")
 
     def handle_event(self, event, context):
         # check if we're debugging locally

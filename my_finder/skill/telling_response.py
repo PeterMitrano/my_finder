@@ -1,5 +1,6 @@
 from my_finder.util import responder
 
+
 def add_item_location(item, location, db):
     # make sure we replace spaces with underscores
     item = item.replace(' ', '_')

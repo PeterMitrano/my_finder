@@ -11,7 +11,8 @@ def handle(intent, slots, session_attributes, db):
             if 'telling' in session_attributes:
                 if 'current_item' in session_attributes:
                     item = session_attributes['current_item']
-                    return telling_response.add_item_location(item, location, db)
+                    return telling_response.add_item_location(item, location,
+                                                              db)
                 else:
                     session_attributes['STATE'] = core.STATES.ASK_ITEM
                     return responder.ask("what's the item again?",
