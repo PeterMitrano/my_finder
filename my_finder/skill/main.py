@@ -133,7 +133,6 @@ class Skill:
             new = event['session']['new']
 
             if intent == 'ItemOrLocationIntent' and new:
-                session_attributes['confirm_get_location_intent'] = True
                 return responder.ask(
                     "I couldn't figure out what you meant. Are you asking about an item or telling?",
                     session_attributes)
