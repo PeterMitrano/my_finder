@@ -1,6 +1,14 @@
+SetLocationIntent I placed my {Item} {Location}
+SetLocationIntent I left my {Item} {Location}
 SetLocationIntent I put my {Item} {Location}
 
+GetLocationIntent where I left my {Item}
 GetLocationIntent where I put my {Item}
+GetLocationIntent where I placed my {Item}
+GetLocationIntent where my {Item} is
+GetLocationIntent where is my {Item}
+GetLocationIntent where are my {Item}
+GetLocationIntent where my {Item} are
 
 ItemOrLocationIntent {ItemOrLocation}
 
