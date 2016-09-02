@@ -3,7 +3,7 @@ from my_finder.util import core
 from my_finder.skill import telling_response
 
 
-def handle(intent, slots, session_attributes, db_result):
+def handle(intent, slots, session_attributes, db):
     if intent == 'ItemOrLocationIntent':
         location = slots['ItemOrLocation'].get('value', None)
 
@@ -11,7 +11,7 @@ def handle(intent, slots, session_attributes, db_result):
             if 'telling' in session_attributes:
                 if 'current_item' in session_attributes:
                     item = session_attributes['current_item']
-                    return telling_response.add_item_location(item, location, db_result)
+                    return telling_response.add_item_location(item, location, db)
                 else:
                     session_attributes['STATE'] = core.STATES.ASK_ITEM
                     return responder.ask("what's the item again?",

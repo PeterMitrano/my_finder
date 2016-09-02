@@ -2,7 +2,7 @@ from my_finder.util import responder
 from my_finder.util import core
 
 
-def handle(intent, slots, session_attributes):
+def handle(intent, slots, session_attributes, db):
     if intent == 'AskOrTellIntent':
         ask_or_tell = slots['AskOrTell']['value']
         if ask_or_tell == 'asking':

@@ -1,3 +1,4 @@
+import namedtuple
 import logging
 
 from my_finder import stage
@@ -61,18 +62,18 @@ class Skill:
                         return responder.ask("Sorry, what's the location?",
                                              session_attributes)
 
-                    telling_response.add_item_location(item, location, self.db_result)
+                    telling_response.add_item_location(item, location, self.db)
                     return responder.tell('Item is %s. Location is %s. Got it.'
                                           % (item, location))
 
                 if intent == 'GetLocationIntent':
-                    asking_response.handle(intent, slots, session_attributes, self.db_result)
+                    asking_response.handle(intent, slots, session_attributes, self.db)
 
             else:
                 state = session_attributes['STATE']
 
                 states['state'].handle(intent, slots, session_attributes,
-                                       self.db_result)
+                                       self.db)
 
     def handle_event(self, event, context):
         # check if we're debugging locally
@@ -95,6 +96,8 @@ class Skill:
         self.db_helper = dbhelper.DBHelper(user, endpoint_url)
         self.db_helper.init_table()
         self.db_result = self.db_helper.getAll()
+        db_tuple = namedtuple('db', ['helper', 'result'])
+        self.db = db_tuple(self.db_helper, self.db_result)
 
         if 'attributes' in event['session']:
             session_attributes = event['session']['attributes']

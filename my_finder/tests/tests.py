@@ -184,7 +184,7 @@ class MyFinderTest(unittest.TestCase):
             request = make_set_request(item, location)
             response_dict = lambda_function.handle_event(request, None)
 
-            result = lambda_function._skill.db_helper.getAll()
+            result = lambda_function._skill.db.helper.getAll()
             item_key = item.replace(' ', '_')
             self.assertEqual(result.value[item_key], location)
             self.assertIn('response', response_dict)
@@ -208,7 +208,7 @@ class MyFinderTest(unittest.TestCase):
             request = make_set_request(item, location)
             response_dict = lambda_function.handle_event(request, None)
 
-            result = lambda_function._skill.db_helper.getAll()
+            result = lambda_function._skill.db.helper.getAll()
             item_key = item.replace(' ', '_')
             self.assertEqual(result.value[item_key], location)
             self.assertIn('response', response_dict)
@@ -235,7 +235,7 @@ class MyFinderTest(unittest.TestCase):
             request = make_set_request(item, location)
             response_dict = lambda_function.handle_event(request, None)
 
-            result = lambda_function._skill.db_helper.getAll()
+            result = lambda_function._skill.db.helper.getAll()
             item_key = item.replace(' ', '_')
             self.assertEqual(result.value[item_key], location)
             self.assertIn('response', response_dict)
@@ -376,7 +376,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
 
-        result = lambda_function._skill.db_helper.getAll()
+        result = lambda_function._skill.db.helper.getAll()
         item_key = item.replace(' ', '_')
         self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
@@ -418,7 +418,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertTrue(responder.is_valid(response_dict))
         self.assertTrue(response_dict['response']['shouldEndSession'])
 
-        result = lambda_function._skill.db_helper.getAll()
+        result = lambda_function._skill.db.helper.getAll()
         item_key = item.replace(' ', '_')
         self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
@@ -429,7 +429,7 @@ class MyFinderTest(unittest.TestCase):
         location = 'kitchen sink'
         request = make_set_request(item, location)
         response_dict = lambda_function.handle_event(request, None)
-        result = lambda_function._skill.db_helper.getAll()
+        result = lambda_function._skill.db.helper.getAll()
         item_key = item.replace(' ', '_')
         self.assertEqual(result.value[item_key], location)
 
