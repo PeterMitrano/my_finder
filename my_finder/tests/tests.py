@@ -338,7 +338,8 @@ class MyFinderTest(unittest.TestCase):
         self.assertFalse(response_dict['response']['shouldEndSession'])
 
         # say location
-        request = make_item_or_location_request('some location')
+        location = 'bathroom sink'
+        request = make_item_or_location_request(location)
         request['session']['attributes'] = response_dict['sessionAttributes']
         request['session']['new'] = False
         response_dict = lambda_function.handle_event(request, None)
@@ -346,7 +347,7 @@ class MyFinderTest(unittest.TestCase):
         self.assertTrue(response_dict['response']['shouldEndSession'])
         self.assertIn('some item',
                       response_dict['response']['outputSpeech']['ssml'])
-        self.assertIn('some location',
+        self.assertIn(location,
                       response_dict['response']['outputSpeech']['ssml'])
 
     def test_launch_asking(self):
