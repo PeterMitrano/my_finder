@@ -26,5 +26,4 @@ def handle(intent, slots, session_attributes, db):
         else:
             return responder.ask("Sorry, what's the item?", session_attributes)
 
-    return responder.tell(
-        "Something went wrong. I expected you to tell me which item you'e asking about.")
+    return responder.ask("Hmm. I expected you to tell me which item you're asking about. Say the item, or say quit and start over.", session_attributes)
