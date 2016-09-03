@@ -1,4 +1,9 @@
+import sys
+import pickle
+
 from nltk.corpus import wordnet
+
+location_base_words = ['container', 'furniture', 'window', 'building', 'vehicle']
 
 def combined_hyponyms(words):
     h = set()
@@ -22,6 +27,8 @@ def expand_synset(h, synset):
     return h
 
 if __name__ == "__main__":
-    all_hyponyms('dog')
-
-
+    all_location_words = combined_hyponyms(location_base_words)
+    filename = sys.path[0] + '/location_words.pkl'
+    f = open(filename, 'wb')
+    pickle.dump(all_location_words, f)
+    f.close()

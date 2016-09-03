@@ -1,7 +1,14 @@
+import sys
+import pickle
+
 from my_finder.util import responder
 from my_finder.util import core
 from my_finder.skill import telling_response
 
+filename = sys.path[0] + '/my_finder/util/location_words.pkl'
+f = open(filename, 'rb')
+location_words = pickle.load(f)
+f.close()
 
 def handle(intent, slots, session_attributes, db):
     if intent == 'ItemOrLocationIntent':
