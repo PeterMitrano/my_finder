@@ -26,7 +26,24 @@ class Skill:
         request_type = event['request']['type']
         if request_type == 'LaunchRequest':
             session_attributes['STATE'] = core.STATES.ASK_OR_TELL
-            return responder.ask("Are you asking about an item or telling?",
+
+            if self.db.result.value is None:
+                invocations = 0
+            else:
+                invocations = self.db.result.value.get('invocations', 0)
+
+            session_attributes['invocations'] = invocations
+            session_attributes['invocations'] += 1
+            self.db_helper.setAll(session_attributes)
+
+            if invocations > 5:
+                ask_or_tell_speech = "Are you asking, or telling?"
+            elif invocations > 1:
+                ask_or_tell_speech = "Are you asking about or item, or telling?"
+            else:
+                ask_or_tell_speech = "Are you asking where an item is, or telling me where it is?"
+
+            return responder.ask(ask_or_tell_speech,
                                  session_attributes)
 
         elif request_type == 'IntentRequest':

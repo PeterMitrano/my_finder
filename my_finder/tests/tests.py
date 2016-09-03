@@ -548,3 +548,16 @@ class MyFinderTest(unittest.TestCase):
 
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
+
+    def test_many_launches(self):
+        delete_table(core.LOCAL_DB_URI)
+
+        invocations = 1
+        for i in range(10):
+            request = make_launch_request()
+            response_dict = lambda_function.handle_event(request, None)
+            self.assertTrue(responder.is_valid(response_dict))
+
+            result = lambda_function._skill.db.helper.getAll()
+            self.assertEqual(result.value['invocations'], invocations)
+            invocations += 1
