@@ -9,6 +9,7 @@ from my_finder.skill import ask_or_tell
 from my_finder.skill import ask_item
 from my_finder.skill import ask_location
 from my_finder.skill import asking_response
+from my_finder.skill import confirm_location
 from my_finder.skill import telling_response
 
 states = {
@@ -16,7 +17,8 @@ states = {
     core.STATES.ASK_ITEM: ask_item,
     core.STATES.ASK_LOCATION: ask_location,
     core.STATES.TELLING_RESPONSE: telling_response,
-    core.STATES.ASKING_RESPONSE: asking_response
+    core.STATES.ASKING_RESPONSE: asking_response,
+    core.STATES.CONFIRM_LOCATION: confirm_location
 }
 
 
@@ -73,6 +75,15 @@ class Skill:
                             "I didn't get an item or a location. What's the item?",
                             session_attributes)
                     if not item and location:
+                        speech, new_location = ask_location.ask_to_modify_location(location)
+
+                        if speech:
+                            # ask the user if they want to accept our suggestion for location
+                            session_attributes['STATE'] = core.STATES.CONFIRM_LOCATION
+                            session_attributes['raw_current_location'] = location
+                            session_attributes['guessing_current_location'] = new_location
+                            return responder.ask(speech, session_attributes)
+
                         session_attributes['STATE'] = core.STATES.ASK_ITEM
                         session_attributes['current_location'] = location
                         return responder.ask("Sorry, what's the item?",
@@ -82,6 +93,16 @@ class Skill:
                         session_attributes['current_item'] = item
                         return responder.ask("Sorry, what's the location?",
                                              session_attributes)
+
+                    speech, new_location = ask_location.ask_to_modify_location(location)
+
+                    if speech:
+                        # ask the user if they want to accept our suggestion for location
+                        session_attributes['STATE'] = core.STATES.CONFIRM_LOCATION
+                        session_attributes['current_item'] = item
+                        session_attributes['raw_current_location'] = location
+                        session_attributes['guessing_current_location'] = new_location
+                        return responder.ask(speech, session_attributes)
 
                     telling_response.add_item_location(item, location, self.db)
                     return responder.tell('Item is %s. Location is %s. Got it.'

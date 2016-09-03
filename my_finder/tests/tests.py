@@ -26,6 +26,48 @@ def delete_table(endpoint_url):
         client.delete_table(TableName=core.DB_TABLE)
 
 
+def make_yes_request():
+    return {
+        "version": 1.0,
+        "session": {
+            "new": True,
+            "sessionId": "0",
+            "application": {
+                "applicationId": core.APP_ID
+            },
+            "user": {
+                "userId": "test_user"
+            }
+        },
+        "request": {
+            "type": "IntentRequest",
+            "intent": {
+                "name": "AMAZON.YesIntent",
+            }
+        }
+    }
+
+def make_no_request():
+    return {
+        "version": 1.0,
+        "session": {
+            "new": True,
+            "sessionId": "0",
+            "application": {
+                "applicationId": core.APP_ID
+            },
+            "user": {
+                "userId": "test_user"
+            }
+        },
+        "request": {
+            "type": "IntentRequest",
+            "intent": {
+                "name": "AMAZON.NoIntent",
+            }
+        }
+    }
+
 def make_set_request(item, location):
     return {
         "version": 1.0,
@@ -200,6 +242,45 @@ class MyFinderTest(unittest.TestCase):
             self.assertIn(location,
                           response_dict['response']['outputSpeech']['ssml'])
             self.assertTrue(response_dict['response']['shouldEndSession'])
+
+    @wip
+    def test_set_and_get_corrected_location(self):
+        """simple set and get, but give a location that is corrected"""
+        delete_table(core.LOCAL_DB_URI)
+
+        item = 'ketchup bottle'
+        location = 'metal dusk'
+        correct_location = "metal desk"
+
+        request = make_set_request(item, location)
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+
+        # accept the correction
+        request = make_yes_request()
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        request['session']['new'] = False
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+
+        # give the item
+
+        # test that it saved
+        result = lambda_function._skill.db.helper.getAll()
+        item_key = item.replace(' ', '_')
+        self.assertEqual(result.value[item_key], correct_location)
+        self.assertIn('response', response_dict)
+        self.assertTrue(response_dict['response']['shouldEndSession'])
+
+        #test that we can retrieve it
+        request = make_get_request(item)
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertIn(item,
+                      response_dict['response']['outputSpeech']['ssml'])
+        self.assertIn(correct_location,
+                      response_dict['response']['outputSpeech']['ssml'])
+        self.assertTrue(response_dict['response']['shouldEndSession'])
 
     def test_semantic_similarity(self):
         delete_table(core.LOCAL_DB_URI)
