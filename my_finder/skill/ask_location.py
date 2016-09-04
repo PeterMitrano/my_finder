@@ -3,6 +3,7 @@ import sys
 import pickle
 from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
+from nltk.corpus import wordnet
 
 from my_finder.util import responder
 from my_finder.util import core
@@ -13,18 +14,27 @@ f = open(filename, 'rb')
 all_location_words = pickle.load(f)
 f.close()
 
-FUZZY_SIMILARITY_THRESHOLD = 15.0 # scale from 0 to 100
+FUZZY_SIMILARITY_THRESHOLD = 17.0 # scale from 0 to 100
 
 def ask_to_modify_location(location):
     new_location_words = []
     for location_word in location.split(' '):
+
         fuzzy_location_word, fuzzy_similarity = process.extractOne(location_word, all_location_words, scorer=fuzz.ratio)
         fuzzy_similarity = fuzzy_similarity / float(min(10,len(location_word)))
         logging.getLogger(core.LOGGER).info("%s %s %f", location_word, fuzzy_location_word, fuzzy_similarity)
-        if fuzzy_similarity > FUZZY_SIMILARITY_THRESHOLD:
-           new_location_words.append(fuzzy_location_word)
-        else:
+
+        # get part of speech
+        is_adjective = len(wordnet.synsets(location_word, wordnet.ADJ)) > 0
+
+        #ignore adjectives, or small words like of, or, an, ect...
+        if is_adjective or len(location_word) <= 2:
            new_location_words.append(location_word)
+        elif fuzzy_similarity < FUZZY_SIMILARITY_THRESHOLD:
+           new_location_words.append(location_word)
+        else:
+           # suggest this as a replacement
+           new_location_words.append(fuzzy_location_word)
 
     new_location = ' '.join(new_location_words)
 

@@ -4,6 +4,9 @@ import pickle
 from nltk.corpus import wordnet
 
 location_base_words = ['container', 'furniture', 'window', 'building', 'vehicle']
+exceptions = [
+    'SAM'
+]
 
 def combined_hyponyms(words):
     h = set()
@@ -28,6 +31,9 @@ def expand_synset(h, synset):
 
 if __name__ == "__main__":
     all_location_words = combined_hyponyms(location_base_words)
+    for exception in exceptions:
+        all_location_words.remove(exception)
+
     filename = sys.path[0] + '/location_words.pkl'
     f = open(filename, 'wb')
     pickle.dump(all_location_words, f)
