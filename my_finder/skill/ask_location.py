@@ -14,14 +14,13 @@ f = open(filename, 'rb')
 all_location_words = pickle.load(f)
 f.close()
 
-FUZZY_SIMILARITY_THRESHOLD = 17.0 # scale from 0 to 100
+FUZZY_SIMILARITY_THRESHOLD = 50.0 # scale from 0 to 100
 
 def ask_to_modify_location(location):
     new_location_words = []
     for location_word in location.split(' '):
 
         fuzzy_location_word, fuzzy_similarity = process.extractOne(location_word, all_location_words, scorer=fuzz.ratio)
-        fuzzy_similarity = fuzzy_similarity / float(min(10,len(location_word)))
         logging.getLogger(core.LOGGER).info("%s %s %f", location_word, fuzzy_location_word, fuzzy_similarity)
 
         # get part of speech
