@@ -6,8 +6,20 @@ telling
 
 ItemType
 
+nails
+cup
+bug
+tissues
+duct tape
+noetbook
+green bowl
+skiis
+badminton racket
+poster
+jacket
+backpack
+phone charger
 red helmet
-blue bin
 bin
 laptop
 keys
@@ -40,9 +52,23 @@ in the coffee pot
 
 ItemOrLocationType
 
+nails
+cup
+bug
+tissues
+duct tape
+noetbook
+green bowl
+skiis
+badminton racket
+poster
+jacket
+backpack
+phone charger
 closet
 shelf
 blue suitcase
+bin
 under my shelf
 inside my black bag
 next to the bed
