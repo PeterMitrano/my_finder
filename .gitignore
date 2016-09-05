@@ -1,5 +1,4 @@
 *.swp
-*.pkl
 *.pyc
 *.zip
 build
