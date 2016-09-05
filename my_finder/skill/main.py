@@ -41,7 +41,7 @@ class Skill:
             if invocations > 5:
                 ask_or_tell_speech = "Are you asking, or telling?"
             elif invocations > 1:
-                ask_or_tell_speech = "Are you asking about or item, or telling?"
+                ask_or_tell_speech = "Are you asking about an item, or telling?"
             else:
                 ask_or_tell_speech = "Are you asking where an item is, or telling me where it is?"
 

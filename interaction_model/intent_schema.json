@@ -39,6 +39,12 @@
                     "type": "ItemOrLocationType"
                 }
             ]
+        },
+        {
+            "intent": "AMAZON.YesIntent"
+        },
+        {
+            "intent": "AMAZON.NoIntent"
         }
     ]
 }
