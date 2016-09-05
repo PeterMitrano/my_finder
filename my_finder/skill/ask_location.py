@@ -14,47 +14,22 @@ f = open(filename, 'rb')
 all_location_words = pickle.load(f)
 f.close()
 
-FUZZY_SIMILARITY_THRESHOLD = 50.0 # scale from 0 to 100
-
-def ask_to_modify_location(location):
-    new_location_words = []
+def contains_known_location_word(location):
     for location_word in location.split(' '):
-
-        fuzzy_location_word, fuzzy_similarity = process.extractOne(location_word, all_location_words, scorer=fuzz.ratio)
-        logging.getLogger(core.LOGGER).info("%s %s %f", location_word, fuzzy_location_word, fuzzy_similarity)
-
-        # get part of speech
-        is_adjective = len(wordnet.synsets(location_word, wordnet.ADJ)) > 0
-
-        #ignore adjectives, or small words like of, or, an, ect...
-        if is_adjective or len(location_word) <= 2:
-           new_location_words.append(location_word)
-        elif fuzzy_similarity < FUZZY_SIMILARITY_THRESHOLD:
-           new_location_words.append(location_word)
-        else:
-           # suggest this as a replacement
-           new_location_words.append(fuzzy_location_word)
-
-    new_location = ' '.join(new_location_words)
-
-    if new_location != location:
-        return "Did you mean %s?" % new_location, new_location
-
-    return None, None
+        if location_word in all_location_words:
+            return True
+    return False
 
 def handle(intent, slots, session_attributes, db):
     if intent == 'ItemOrLocationIntent':
         location = slots['ItemOrLocation'].get('value', None)
 
         if location:
-            speech, new_location = ask_to_modify_location(location)
-
-            if speech:
-                # ask the user if they want to accept our suggestion for location
+            session_attributes['current_location'] = location
+            if not contains_known_location_word(location):
+                # ask the user to confirm location
                 session_attributes['STATE'] = core.STATES.CONFIRM_LOCATION
-                session_attributes['raw_current_location'] = location
-                session_attributes['guessing_current_location'] = new_location
-                return responder.ask(speech, session_attributes)
+                return responder.ask("I heard %s. is that the right location?" % location, session_attributes)
 
 
             if 'telling' in session_attributes:

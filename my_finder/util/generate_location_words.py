@@ -3,7 +3,7 @@ import pickle
 
 from nltk.corpus import wordnet
 
-location_base_words = ['container', 'furniture', 'window', 'building', 'vehicle']
+location_base_words = ['container', 'furniture', 'window', 'building', 'vehicle', 'storage_space']
 exceptions = [
     'SAM'
 ]

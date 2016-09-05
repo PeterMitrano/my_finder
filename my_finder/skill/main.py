@@ -75,14 +75,11 @@ class Skill:
                             "I didn't get an item or a location. What's the item?",
                             session_attributes)
                     if not item and location:
-                        speech, new_location = ask_location.ask_to_modify_location(location)
-
-                        if speech:
-                            # ask the user if they want to accept our suggestion for location
+                        if not ask_location.contains_known_location_word(location):
+                            # ask the user to confirm location
                             session_attributes['STATE'] = core.STATES.CONFIRM_LOCATION
-                            session_attributes['raw_current_location'] = location
-                            session_attributes['guessing_current_location'] = new_location
-                            return responder.ask(speech, session_attributes)
+                            session_attributes['current_location'] = location
+                            return responder.ask("I heard %s. is that the right location?" % location, session_attributes)
 
                         session_attributes['STATE'] = core.STATES.ASK_ITEM
                         session_attributes['current_location'] = location
@@ -94,15 +91,12 @@ class Skill:
                         return responder.ask("Sorry, what's the location?",
                                              session_attributes)
 
-                    speech, new_location = ask_location.ask_to_modify_location(location)
-
-                    if speech:
-                        # ask the user if they want to accept our suggestion for location
+                    if not ask_location.contains_known_location_word(location):
+                        # ask the user to confirm location
                         session_attributes['STATE'] = core.STATES.CONFIRM_LOCATION
+                        session_attributes['current_location'] = location
                         session_attributes['current_item'] = item
-                        session_attributes['raw_current_location'] = location
-                        session_attributes['guessing_current_location'] = new_location
-                        return responder.ask(speech, session_attributes)
+                        return responder.ask("I heard %s. is that the right location?" % location, session_attributes)
 
                     telling_response.add_item_location(item, location, self.db)
                     return responder.tell('Item is %s. Location is %s. Got it.'
@@ -157,5 +151,4 @@ class Skill:
 
         response = self.handle_intent(event, session_attributes)
 
-        logging.getLogger(core.LOGGER).warn(response)
         return response

@@ -363,7 +363,7 @@ class MyFinderTest(unittest.TestCase):
                       response_dict['response']['outputSpeech']['ssml'])
 
     def test_missing_item_and_location(self):
-        request = make_set_request('giant pan', 'leftmost cupboard')
+        request = make_set_request('canned air', 'guitar case')
         request['request']['intent']['slots']['Item'].pop('value')
         request['request']['intent']['slots']['Location'].pop('value')
         response_dict = lambda_function.handle_event(request, None)
@@ -469,20 +469,18 @@ class MyFinderTest(unittest.TestCase):
         self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
 
-    @wip
-    def test_launch_corrected_location(self):
-        """simple set and get, but give a location that is corrected"""
+    def test_launch_confirmed_location(self):
+        """simple set and get, and confirm we want to use the weird location"""
         delete_table(core.LOCAL_DB_URI)
 
         item = 'ketchup bottle'
-        location = 'metal dusk'
-        correct_location = "metal desk"
+        location = 'wherefore art thou romeo'
 
         request = make_set_request(item, location)
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
 
-        # accept the correction
+        # say yes we want to use it
         request = make_yes_request()
         request['session']['attributes'] = response_dict['sessionAttributes']
         request['session']['new'] = False
@@ -492,7 +490,7 @@ class MyFinderTest(unittest.TestCase):
         # test that it saved
         result = lambda_function._skill.db.helper.getAll()
         item_key = item.replace(' ', '_')
-        self.assertEqual(result.value[item_key], correct_location)
+        self.assertEqual(result.value[item_key], location)
         self.assertIn('response', response_dict)
         self.assertTrue(response_dict['response']['shouldEndSession'])
 
@@ -502,32 +500,39 @@ class MyFinderTest(unittest.TestCase):
         self.assertTrue(responder.is_valid(response_dict))
         self.assertIn(item,
                       response_dict['response']['outputSpeech']['ssml'])
-        self.assertIn(correct_location,
+        self.assertIn(location,
                       response_dict['response']['outputSpeech']['ssml'])
         self.assertTrue(response_dict['response']['shouldEndSession'])
 
-    @wip
-    def test_launch_corrected_location_missing_item(self):
-        """simple set and get, missing item, and have location corrected"""
+    def test_launch_fix_location_missing_item(self):
+        """simple set and get, missing item, and give corrected location"""
         delete_table(core.LOCAL_DB_URI)
 
         item = 'cooling fan'
-        location = 'pin'
-        correct_location = "inn"
+        location = 'red pin'
+        correct_location = "red bin"
 
         request = make_set_request(item, location)
         request['request']['intent']['slots']['Item'].pop('value')
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
 
-        # accept the correction
-        request = make_yes_request()
+        # say no because we want to correct it
+        request = make_no_request()
         request['session']['attributes'] = response_dict['sessionAttributes']
         request['session']['new'] = False
         response_dict = lambda_function.handle_event(request, None)
         self.assertTrue(responder.is_valid(response_dict))
 
-        # give the item
+        # give the location corrected
+        request = make_item_or_location_request(correct_location)
+        request['session']['new'] = False
+        request['session']['attributes'] = response_dict['sessionAttributes']
+        response_dict = lambda_function.handle_event(request, None)
+        self.assertTrue(responder.is_valid(response_dict))
+        self.assertFalse(response_dict['response']['shouldEndSession'])
+
+        # now give the item, cuz that was missing
         request = make_item_or_location_request(item)
         request['session']['new'] = False
         request['session']['attributes'] = response_dict['sessionAttributes']
